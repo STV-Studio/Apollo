@@ -4,7 +4,7 @@
   <p>A non-linear desktop video & audio editor built with React and Electron.</p>
 
   <p>
-    <a href="README.en.md">English</a> · <a href="README.ru.md">Русский</a> · <a href="README.zh.md">简体中文</a>
+    <a href="docs/README.en.md">English</a> · <a href="docs/README.ru.md">Русский</a> · <a href="docs/README.zh.md">简体中文</a>
   </p>
 
   <p>
@@ -16,7 +16,7 @@
   </p>
 
   <!-- SCREENSHOT: replace with real app screenshot -->
-  <img src="docs/screenshot.png" width="860" alt="Apollo Editor screenshot" />
+  <img src="docs/screen_app.png" width="860" alt="Apollo Editor screenshot" />
 </div>
 
 ---
