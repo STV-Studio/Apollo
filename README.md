@@ -1,73 +1,84 @@
-# React + TypeScript + Vite
+<div align="center">
+  <img src="public/favicon.svg" width="96" alt="Apollo" />
+  <h1>Apollo</h1>
+  <p>A non-linear desktop video & audio editor built with React and Electron.</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+  <p>
+    <a href="README.en.md">English</a> · <a href="README.ru.md">Русский</a> · <a href="README.zh.md">简体中文</a>
+  </p>
 
-Currently, two official plugins are available:
+  <p>
+    <img src="https://img.shields.io/badge/react-19-61DAFB?logo=react&logoColor=black&style=flat-square" />
+    <img src="https://img.shields.io/badge/typescript-6.0-3178C6?logo=typescript&logoColor=white&style=flat-square" />
+    <img src="https://img.shields.io/badge/vite-8-646CFF?logo=vite&logoColor=white&style=flat-square" />
+    <img src="https://img.shields.io/badge/electron-41-47848F?logo=electron&logoColor=white&style=flat-square" />
+    <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" />
+  </p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+  <!-- SCREENSHOT: replace with real app screenshot -->
+  <img src="docs/screenshot.png" width="860" alt="Apollo Editor screenshot" />
+</div>
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- **Multi-track timeline** — arrange video, audio, and image clips across unlimited tracks
+- **Real-time preview** — frame-accurate playback with layer compositing
+- **Drag & drop import** — drop files straight onto the canvas or the timeline
+- **Clip trimming** — resize clips from either edge with frame-accurate handles
+- **Audio fades** — per-clip fade-in / fade-out curves
+- **Track management** — add, rename, and delete tracks on the fly
+- **Zoom** — scroll to zoom the timeline ruler in/out
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Quick start
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/your-org/apollo.git
+cd apollo
+npm install
+npm run start        # Electron + Vite dev server
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+> Requires **Node.js 18+**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev          # browser only (no Electron)
+npm run build        # production bundle
 ```
+
+## Tech stack
+
+| | |
+|---|---|
+| UI | React 19 + TypeScript |
+| Bundler | Vite 8 |
+| Desktop | Electron 41 |
+| Styling | SCSS |
+| File drop | react-dropzone |
+
+## Project structure
+
+```
+src/
+├── components/
+│   ├── TimeLine/        # timeline, tracks, clips, playhead
+│   └── Preview/         # preview canvas + layer compositor
+├── context/
+│   ├── ClipContext/     # assets, tracks, clip state
+│   ├── CurrentTimeContext/
+│   └── PreviewContext/
+└── utils/               # hooks: drag, resize, zoom, sync
+electron/
+└── main.ts              # BrowserWindow bootstrap
+```
+
+## Contributing
+
+Pull requests are welcome. For major changes please open an issue first.
+
+---
+
+<div align="center">
+  <sub>Made by <a href="https://github.com/your-name">your-name</a></sub>
+</div>
