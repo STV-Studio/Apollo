@@ -80,5 +80,5 @@ Pull requests are welcome. For major changes please open an issue first.
 ---
 
 <div align="center">
-  <sub>Made by <a href="https://github.com/your-name">your-name</a></sub>
+  <sub>Made by <a href="https://github.com/Starodybczev">Starodybvzev</a></sub>
 </div>
