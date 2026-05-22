@@ -1,0 +1,473 @@
+@charset "UTF-8";
+/* === ОСНОВА === */
+.timeline {
+  border: 1px solid #121212;
+  background-color: #161616;
+  height: 50vh;
+  width: 100%;
+  display: flex;
+  grid-column: 2;
+}
+
+/* layout: sidebar + timeline */
+.timeline_layout {
+  display: flex;
+  width: 100%;
+  grid-template-columns: 220px 1fr;
+  background-color: #161616;
+  height: 50vh;
+}
+
+.timeline_content {
+  position: relative;
+  width: -moz-max-content;
+  width: max-content;
+  /* 🔥 ключ */
+}
+
+/* === SIDEBAR === */
+.timeline_sidebar {
+  grid-column: 1;
+  height: 46vh;
+  width: 220px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: 0 10px;
+  padding-bottom: 20px;
+  border-right: 1px solid #333;
+  background-color: #141414;
+}
+
+.track_label {
+  margin-top: 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 10px;
+  color: white;
+  border-bottom: 1px solid #333;
+}
+
+/* === TIMELINE === */
+.timeline_inner {
+  flex: 1;
+  overflow: auto;
+  height: 45vh;
+  position: relative;
+}
+
+/* === ЛИНЕЙКА === */
+.ruler {
+  position: sticky;
+  top: 0;
+  height: 20px;
+  color: #ADADAD;
+  z-index: 5;
+  background-color: #161616;
+}
+
+/* === ДОРОЖКИ === */
+.tracks_block {
+  height: 50vh;
+  position: relative;
+}
+
+/* строка дорожки */
+.track_row {
+  position: relative;
+  height: 60px;
+  border-bottom: 1px solid #333;
+}
+
+/* === PLAYHEAD === */
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #D32F2F;
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* === КЛИПЫ === */
+.clip_block {
+  position: absolute;
+  padding: 10px;
+  z-index: 100;
+  cursor: grab;
+}
+
+.clip_block:active {
+  cursor: grabbing;
+}
+
+/* === RESIZE === */
+.resize_handle {
+  position: absolute;
+  width: 6px;
+  top: 0;
+  bottom: 0;
+  background: #fff;
+  cursor: ew-resize;
+  z-index: 20;
+  opacity: 0;
+  transition: 0.2s;
+}
+
+.clip_block:hover .resize_handle {
+  opacity: 1;
+}
+
+.resize_handle.left {
+  left: 0;
+}
+
+.resize_handle.right {
+  right: 0;
+}
+
+/* === OPTIONS === */
+.options_function {
+  background-color: #161616;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 20px;
+  border: 1px solid #121212;
+}
+
+.btn__add_tracks {
+  background-color: #121212;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: 1s;
+}
+.btn__add_tracks:hover {
+  background-color: rgb(22, 22, 22);
+}
+
+.delete_btn_tracks {
+  background-color: #D32F2F;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: 1s;
+}
+.delete_btn_tracks:hover {
+  background-color: rgb(211, 47, 47);
+}
+
+.block_edit_text_tracks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.edit_name_tracks {
+  background-color: #121212;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  width: 50%;
+}
+
+.save_changes_btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: 1s;
+}
+.save_changes_btn:hover {
+  background-color: rgb(76, 175, 80);
+}
+
+.remove_changes_btn {
+  background-color: #D32F2F;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: 1s;
+}
+.remove_changes_btn:hover {
+  background-color: rgb(211, 47, 47);
+}
+
+.fade_block {
+  height: 10px;
+  position: relative;
+}
+
+.volume-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.block_edit_Clip {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+
+.asset_name {
+  cursor: pointer;
+  color: white;
+}
+
+.block_edit_name {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.Preview_Container {
+  height: 50vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  background-color: #1E1E1E;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.block__ViewPortFile {
+  width: 800px;
+  color: white;
+  height: 650px;
+  border: 1px solid #121212;
+  background-color: #161616;
+  overflow: auto;
+  position: relative;
+}
+
+.ViewPort_FILE_ZONE {
+  width: 100%;
+  min-height: 640px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-top: 5px 10px;
+  padding-bottom: 70px;
+}
+
+.no_result {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.file_from_dropzone {
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+.file_from_dropzone:hover .asset_image,
+.file_from_dropzone:hover .asset_video,
+.file_from_dropzone:hover .audio_preview {
+  cursor: -webkit-grab;
+  background-color: rgb(66, 66, 66);
+}
+.file_from_dropzone:hover .ID_NAME {
+  background-color: rgb(66, 66, 66);
+}
+
+.asset_image, .asset_video, .audio_preview {
+  width: 200px;
+  border: 1px solid #2A2A2A;
+  background-color: #2A2A2A;
+  border-bottom: none;
+  padding: 20px;
+  display: block;
+}
+
+.block_added_and_filter {
+  color: white;
+  background-color: #252525;
+  padding: 0 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter_block {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 10px;
+}
+.filter_block input, .filter_block select {
+  padding: 10px;
+}
+
+input[type=file]::file-selector-button {
+  background-color: rgb(29, 103, 172);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.ID_NAME {
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #2A2A2A;
+  color: white;
+  padding: 10px;
+  padding-bottom: 10px;
+}
+.ID_NAME h4 {
+  max-width: 100px;
+  width: 200px;
+  word-break: break-word;
+  white-space: normal;
+  cursor: pointer;
+}
+.ID_NAME input {
+  padding: 10px 5px;
+  width: 110px;
+}
+
+.block_btn_optios {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.btn_save {
+  background-color: black;
+  border-radius: 6px;
+  padding: 10px;
+  border: none;
+  width: 40px;
+  cursor: pointer;
+  transition: 1s;
+}
+.btn_save:disabled {
+  background-color: rgb(143, 143, 143);
+  cursor: not-allowed;
+}
+
+.btn_cancel {
+  background-color: rgb(56, 56, 180);
+  border-radius: 6px;
+  padding: 10px;
+  width: 40px;
+  cursor: pointer;
+  transition: 1s;
+  border: none;
+}
+
+.preview_window {
+  position: relative;
+  width: 40%;
+  height: 100%;
+  background: #111;
+  /* темный фон вместо серого */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* 💣 визуальный апгрейд */
+  border-left: 1px solid #222;
+  isolation: isolate;
+}
+
+.cinema {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: black;
+}
+
+.video {
+  position: absolute;
+  /* 💣 важно */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  z-index: 0;
+  /* 💣 ключ */
+}
+
+.layer {
+  position: absolute;
+  pointer-events: none;
+  -o-object-fit: contain;
+     object-fit: contain;
+  z-index: 1;
+}
+
+.cinema::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.MENU_OPTION {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #222;
+  border: 1px solid #444;
+  border-radius: 4px;
+  z-index: 100;
+  min-width: 120px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+.MENU_OPTION li {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.MENU_OPTION li:nth-child(2) {
+  color: red;
+}
+
+.box_all {
+  position: relative;
+  display: inline-block;
+}
+
+.btn_option {
+  background: none;
+  border: none;
+  padding: 4;
+}/*# sourceMappingURL=index.css.map */

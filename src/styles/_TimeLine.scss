@@ -1,0 +1,243 @@
+/* === ОСНОВА === */
+.timeline {
+    border: 1px solid #121212;
+    background-color: #161616;
+    height: 50vh;
+    width: 100%;
+    display: flex;
+    grid-column: 2;
+}
+
+
+/* layout: sidebar + timeline */
+.timeline_layout {
+    display: flex;
+
+    width: 100%;
+    grid-template-columns: 220px 1fr;
+    background-color: #161616;
+    height: 50vh;
+}
+
+.timeline_content {
+    position: relative;
+    width: max-content;
+    /* 🔥 ключ */
+}
+
+/* === SIDEBAR === */
+.timeline_sidebar {
+    grid-column: 1;
+    height: 46vh;
+    width: 220px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 0 10px;
+    padding-bottom: 20px;
+    border-right: 1px solid #333;
+    background-color: #141414;
+}
+
+.track_label {
+    margin-top: 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px;
+    color: white;
+    border-bottom: 1px solid #333;
+}
+
+/* === TIMELINE === */
+.timeline_inner {
+    flex: 1;
+    overflow: auto;
+    height: 45vh;
+    position: relative;
+}
+
+
+
+/* === ЛИНЕЙКА === */
+.ruler {
+    position: sticky;
+    top: 0;
+    height: 20px;
+    color: #ADADAD;
+    z-index: 5;
+    background-color: #161616;
+}
+
+/* === ДОРОЖКИ === */
+.tracks_block {
+    height: 50vh;
+    position: relative;
+}
+
+/* строка дорожки */
+.track_row {
+    position: relative;
+    height: 60px;
+    border-bottom: 1px solid #333;
+}
+
+/* === PLAYHEAD === */
+.playhead {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #D32F2F;
+    z-index: 100;
+    pointer-events: none;
+}
+
+/* === КЛИПЫ === */
+.clip_block {
+    position: absolute;
+    padding: 10px;
+    z-index: 100;
+    cursor: grab;
+}
+
+.clip_block:active {
+    cursor: grabbing;
+}
+
+/* === RESIZE === */
+.resize_handle {
+    position: absolute;
+    width: 6px;
+    top: 0;
+    bottom: 0;
+    background: #fff;
+    cursor: ew-resize;
+    z-index: 20;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.clip_block:hover .resize_handle {
+    opacity: 1;
+}
+
+.resize_handle.left {
+    left: 0;
+}
+
+.resize_handle.right {
+    right: 0;
+}
+
+/* === OPTIONS === */
+.options_function {
+    background-color: #161616;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 20px;
+    border: 1px solid #121212;
+}
+
+.btn__add_tracks{
+    background-color: #121212;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 1s;
+
+    &:hover {
+        background-color: rgb(22, 22, 22);
+    }
+}
+
+.delete_btn_tracks{
+    background-color: #D32F2F;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: 1s;
+
+    &:hover {
+        background-color: rgb(211, 47, 47);
+    }
+}
+
+
+.block_edit_text_tracks{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.edit_name_tracks{
+    background-color: #121212;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    width: 50%;
+}
+
+.save_changes_btn{
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: 1s;
+
+    &:hover {
+        background-color: rgb(76, 175, 80);
+    }
+}
+
+.remove_changes_btn{
+    background-color: #D32F2F;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: 1s;
+
+    &:hover {
+        background-color: rgb(211, 47, 47);
+    }
+}
+
+.fade_block{
+    height: 10px;
+    position: relative;
+}
+
+
+.volume-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+
+.block_edit_Clip{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+
+.asset_name{
+    cursor: pointer;
+    color: white;
+}
+
+.block_edit_name{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}

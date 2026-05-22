@@ -1,0 +1,171 @@
+* {
+    margin: 0 ;
+    padding: 0;
+}
+
+.Preview_Container{
+    height: 50vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    background-color: #1E1E1E;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.block__ViewPortFile{
+    width: 800px;
+    color: white;
+    height: 650px;
+    border: 1px solid #121212;
+    background-color: #161616;
+    overflow: auto;
+    position: relative;
+}
+
+
+.ViewPort_FILE_ZONE{
+    width: 100%;
+    min-height: 640px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-top: 5px 10px;
+    padding-bottom: 70px;
+}
+
+.no_result{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.file_from_dropzone {
+    position: relative;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+
+        .asset_image,
+        .asset_video,
+        .audio_preview {
+            cursor: -webkit-grab;
+            background-color: rgb(66, 66, 66);
+        }
+        .ID_NAME {
+            background-color: rgb(66, 66, 66);
+        }
+    }
+}
+
+.asset_image, .asset_video,.audio_preview {
+    width: 200px;
+    border: 1px solid #2A2A2A;
+    background-color: #2A2A2A;
+    border-bottom: none;
+    padding: 20px;
+    display: block;
+
+}
+
+.block_added_and_filter{
+    color: white;
+    background-color: #252525;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter_block{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 10px;
+
+    input, select{
+        padding: 10px;
+    }
+
+}
+
+input[type="file"]::file-selector-button {
+    background-color: rgb(29, 103, 172);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+
+.ID_NAME{
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2A2A2A;
+    color: white;
+    padding: 10px;
+    padding-bottom: 10px;
+
+    h4{
+        max-width: 100px;
+        width: 200px;
+        word-break: break-word;
+        white-space: normal;
+        cursor: pointer;
+    }
+
+    input{
+        padding: 10px 5px;
+        width: 110px;
+
+    }
+
+
+}
+
+.block_btn_optios{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn_save{
+    background-color: black;
+    border-radius: 6px;
+    padding: 10px;
+    border: none;
+    width: 40px;
+    cursor: pointer;
+    transition: 1s;
+
+    &:disabled{
+        background-color: rgb(143, 143, 143);
+        cursor: not-allowed;
+    }
+}
+
+.btn_cancel{
+    background-color: rgb(56, 56, 180);
+    border-radius: 6px;
+    padding: 10px;
+    width: 40px;
+    cursor: pointer;
+    transition: 1s;
+    border: none;
+}
