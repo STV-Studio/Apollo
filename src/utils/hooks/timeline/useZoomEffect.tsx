@@ -1,7 +1,65 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+/**
+ * **RU:** Интерфейс возвращаемых значений хука `useZoomEffect`.
+ * **EN:** Return interface for the `useZoomEffect` hook.
+ */
+interface UseZoomEffectResult {
+  /**
+   * **RU:** Текущий уровень масштаба (от `10` до `300`).
+   * Значение по умолчанию: `50`. Используйте эту переменную для динамического расчета ширины треков или шага сетки таймлайна.
+   * * **EN:** Current zoom scale level (`10` to `300`).
+   * Default value is `50`. Use this variable to dynamically calculate track widths or timeline grid steps.
+   */
+  scale: number;
+
+  /**
+   * **RU:** Динамический шаг изменения масштаба.
+   * Автоматически уменьшается при большом приближении для обеспечения ультра-плавного зума, и увеличивается на мелком масштабе.
+   * * **EN:** Dynamic scale step for zoom transitions.
+   * Automatically decreases at high zoom levels for ultra-smooth rendering, and increases at low zoom levels.
+   */
+  STEP: number;
+
+  /**
+   * **RU:** Ссылка (`ref`), которую **ОБЯЗАТЕЛЬНО** нужно повесить на самый верхний контейнер (обёртку) таймлайна с прокруткой (`overflow-x: auto`).
+   * Без этого рефа хук не сможет вычислять координаты мыши и управлять скроллом контента!
+   * * **EN:** React `ref` that **MUST** be attached to the top-level scrollable timeline container (`overflow-x: auto`).
+   * Without this ref, the hook won't be able to track mouse coordinates or adjust scrolling!
+   */
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+/**
+ * **RU:** Кастомный хук для умного масштабирования (Zoom) таймлайна колесиком мыши с зажатым **Ctrl**.
+ * * **Особенность для чайников:** Хук не просто зумит, он удерживает позицию таймлайна ровно под курсором мыши (как в Figma, Premiere Pro или After Effects), чтобы экран не «улетал» в сторону при масштабировании.
+ * * **EN:** Custom hook for smart timeline zooming via mouse wheel while holding **Ctrl**.
+ * Keeps the timeline content pinned right under the mouse cursor (Figma/Premiere Pro style).
+ *
+ * ---
+ * @returns Объект управления масштабом (`scale`, `STEP`, `containerRef`).
+ *
+ * ---
+ * @example
+ * ```tsx
+ * // RU: Пример использования в компоненте таймлайна:
+ * // EN: Timeline component usage example:
+ * * function Timeline() {
+ * const { scale, STEP, containerRef } = useZoomEffect();
+ * * return (
+ * // 🔥 Обязательно вешаем ref на контейнер с прокруткой!
+ * <div ref={containerRef} style={{ overflowX: 'auto', width: '100%' }}>
+ * <div style={{ width: `${scale * 10}px` }}>
+ * Текущий шаг зума: {STEP}
+ * </div>
+ * </div>
+ * );
+ * }
+ * ```
+ */
+
 //! хук для управления эффектом масштабирования таймлайна при прокрутке колесика мыши с удерживанием клавиши Ctrl, а также для сохранения позиции прокрутки относительно курсора мыши при масштабировании
-export function useZoomEffect() {
+export function useZoomEffect(): UseZoomEffectResult {
   const [scale, setScale] = useState(50);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
