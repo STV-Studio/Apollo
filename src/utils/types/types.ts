@@ -54,7 +54,7 @@ export type ClipViewTimeLine = {
    * EN: Media type used for rendering logic.
    * RU: Тип медиа для логики отображения.
    */
-  type: "video" | "audio" | "image" | "default" | "text";
+  type: "video" | "audio" | "image" | "default" | "text" | "effect";
 
   /**
    * EN: Optional custom clip name.
@@ -93,7 +93,7 @@ export type Track = {
    * EN: Optional track media type.
    * RU: Тип дорожки.
    */
-  type?: "video" | "audio" | "image" | "default" | "text";
+  type?: "video" | "audio" | "image" | "default" | "text" | "effect";
 };
 
 /**
@@ -142,7 +142,7 @@ export type TimelineClip = {
    * EN: Clip media type.
    * RU: Тип клипа.
    */
-  type: "video" | "audio" | "image" | "default" | "text";
+  type: "video" | "audio" | "image" | "default" | "text" | "effect";
 
   /**
    * EN: Optional group identifier.

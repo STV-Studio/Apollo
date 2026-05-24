@@ -1,3 +1,4 @@
+
 /**
  * EN: Base entity for every project asset.
  * Stores shared metadata for video, audio, image and text assets.
@@ -123,6 +124,17 @@ export type TextAsset = BaseAsset & {
   text: string;
 };
 
+
+export type EffectAsset = BaseAsset & {
+    type: "effect";
+
+  /**
+   * EN: Effect identifier, for example blur/brightness/chroma-key.
+   * RU: Название/ключ эффекта, например blur/brightness/chroma-key.
+   */
+  effectType: "blur" | "brightness" | "contrast" | "custom";
+}
+
 /**
  * EN: Union type containing every supported asset type.
  * Used when the editor works with any media object.
@@ -132,13 +144,15 @@ export type TextAsset = BaseAsset & {
  * с любым медиа объектом.
  *
  * Includes:
- * - VideoAsset
- * - AudioAsset
- * - ImageAsset
- * - TextAsset
+ * - `VideoAsset`
+ * - `AudioAsset`
+ * - `ImageAsset`
+ * - `TextAsset`
+ * - `EffectAsset`
  */
 export type Asset =
   | VideoAsset
   | AudioAsset
   | ImageAsset
-  | TextAsset;
+  | TextAsset
+  | EffectAsset
