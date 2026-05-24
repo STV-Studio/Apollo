@@ -31,7 +31,7 @@ export function createClipsFromRegistry({
       createTimelineClip({
         assetId: asset.id,
         start,
-        duration: getDefaultDuration(type),
+        duration: getDefaultDuration(type, asset),
         type: clipType,
         groupId,
       }),
