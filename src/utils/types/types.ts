@@ -248,6 +248,16 @@ export type ClipWithTrack = TimelineClip & {
   trackIndex: number;
 };
 
+
+/**
+ * EN:
+ * Collection of visible overlay layers.
+ *
+ * RU:
+ * Коллекция активных overlay слоёв.
+ */
+export type ActiveLayers = ClipWithTrack[];
+
 /**
  * EN: Shared error message for invalid context usage.
  *
