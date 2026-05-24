@@ -24,7 +24,10 @@ export function createClipsFromRegistry({
     const track = index === 0 ? targetTrack : nextTrack;
     if (!track) return;
 
-    const duration = "defaultDuration" in config ? config.defaultDuration : asset.duration;
+    const duration =
+  "defaultDuration" in config && config.defaultDuration != null
+    ? config.defaultDuration
+    : asset.duration;
 
     addToTrack(
       track.id,
