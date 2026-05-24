@@ -1,10 +1,11 @@
 import { memo, useMemo } from "react";
 import { useDragClip, useResizeClip } from "../../utils";
 import { useClips } from "../../context";
-import type { ClipViewTimeLine, TimelineClip } from "../../utils/types/types";
+import type { TimelineClip } from "../../utils/types/types";
 import Option_ListClip from "./Option_ListClip";
 import FadeClip from "./FadeClip";
 import EditBlock from "./EditBlock";
+import { getClipColor } from "../../utils/helper/helperTypeClip";
 
 interface Props {
   clip: TimelineClip;
@@ -18,14 +19,6 @@ interface Props {
   onSave: (id: string) => void;
   onCancel: () => void;
 }
-
-const TYPE_COLORS: Record<ClipViewTimeLine["type"], string> = {
-  image: "#718E5E",
-  video: "#5E7A8C",
-  audio: "#8C6D5E",
-  text: "#4F3626",
-  default: "#9e9e9e",
-};
 
 function ClipItem({
   clip,
@@ -51,7 +44,7 @@ function ClipItem({
     sourceOffset: clip.sourceOffset ?? 0,
   });
 
-  const backgroundColor = TYPE_COLORS[type] || TYPE_COLORS.default;
+  const backgroundColor = getClipColor(type === "default" ? "effect" : type);
 
   const handleSelectedClip = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
