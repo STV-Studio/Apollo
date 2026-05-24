@@ -2,6 +2,8 @@ import { useCallback, type DragEvent } from "react";
 import { useClips } from "../../../context";
 import { useFileReader } from "../ui/useFileReader";
 import { createTimelineClip } from "../../helper/createTimelineClip";
+import { canDropFromViewport } from "../../helper/helperTypeClip";
+import { createClipsFromRegistry } from "../../helper/createClipsFromRegistry";
 
 interface Props {
   scale: number;
@@ -37,60 +39,35 @@ export function useTimeLineDrop({ scale }: Props) {
 
       // --- ПЕРЕТАСКИВАНИЕ ИЗ ASSETS ---
       const clipId = e.dataTransfer.getData("clipId");
+
       if (clipId) {
-        const clip = clips.find((c) => c.id === clipId);
-        if (!clip) return;
+        const asset = clips.find((c) => c.id === clipId);
+        if (!asset) return;
 
-        const groupId = crypto.randomUUID();
+        if (!canDropFromViewport(asset.type)) return;
 
-        if (clip.type === "video") {
-          // 🎬 VIDEO
-          addToTrack(
-            targetTrack.id,
-            createTimelineClip({
-              assetId: clip.id,
-              start,
-              duration: clip.duration,
-              type: "video",
-              groupId,
-            }),
-          );
+        let nextTrack = tracks[trackIndex + 1];
 
-          // 🔊 AUDIO (на следующую дорожку)
-          let nextTrack = tracks[trackIndex + 1];
-          if (!nextTrack) {
-            nextTrack = {
-              id: crypto.randomUUID(),
-              name: `Track ${tracks.length + 1}`,
-              clips: [],
-            };
-            setTracks((prev) => [...prev, nextTrack]);
-          }
+        if (!nextTrack) {
+          nextTrack = {
+            id: crypto.randomUUID(),
+            name: `Track ${tracks.length + 1}`,
+            clips: [],
+          };
 
-          addToTrack(
-            nextTrack.id,
-            createTimelineClip({
-              assetId: clip.id,
-              start,
-              duration: clip.duration,
-              type: "audio",
-              groupId,
-            }),
-          );
-        } else {
-          // 🎵 AUDIO или 🖼 IMAGE (не видео)
-          addToTrack(
-            targetTrack.id,
-            createTimelineClip({
-              assetId: clip.id,
-              start,
-              duration: clip.duration,
-              type: clip.type as "audio" | "image",
-              groupId,
-            }),
-          );
+          setTracks((prev) => [...prev, nextTrack]);
         }
-        return; // Завершаем, так как это был внутренний ассет
+
+        createClipsFromRegistry({
+          asset,
+          type: asset.type,
+          start,
+          targetTrack,
+          nextTrack,
+          addToTrack,
+        });
+
+        return;
       }
 
       // --- ПЕРЕТАСКИВАНИЕ ФАЙЛА НАПРЯМУЮ ---
