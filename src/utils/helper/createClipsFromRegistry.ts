@@ -1,6 +1,7 @@
 import type { TimelineClip, Track } from "../types";
 import { CLIP_REGISTRY, type ClipType } from "./CLIP_REGISTRY";
 import { createTimelineClip } from "./createTimelineClip";
+import { getDefaultDuration } from "./getDefaultDuration";
 
 export function createClipsFromRegistry({
   asset,
@@ -24,17 +25,13 @@ export function createClipsFromRegistry({
     const track = index === 0 ? targetTrack : nextTrack;
     if (!track) return;
 
-    const duration =
-  "defaultDuration" in config && config.defaultDuration != null
-    ? config.defaultDuration
-    : asset.duration;
 
     addToTrack(
       track.id,
       createTimelineClip({
         assetId: asset.id,
         start,
-        duration,
+        duration: getDefaultDuration(type),
         type: clipType,
         groupId,
       }),
