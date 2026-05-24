@@ -1,38 +1,35 @@
+// CLIP_REGISTRY.ts
 export const CLIP_REGISTRY = {
   video: {
     source: "viewport",
     color: "#5E7A8C",
-    defaultDuration: null,
+    creates: ["video", "audio"],
   },
 
   audio: {
     source: "viewport",
     color: "#8C6D5E",
-    defaultDuration: null,
+    creates: ["audio"],
   },
 
   image: {
     source: "viewport",
     color: "#718E5E",
-    defaultDuration: 5,
+    creates: ["image"],
   },
 
   text: {
     source: "timeline",
     color: "#4F3626",
+    creates: ["text"],
     defaultDuration: 5,
   },
 
   effect: {
     source: "timeline",
     color: "#6A4C93",
+    creates: ["effect"],
     defaultDuration: 3,
-  },
-
-  transition: {
-    source: "timeline",
-    color: "#C77DFF",
-    defaultDuration: 1,
   },
 } as const;
 
