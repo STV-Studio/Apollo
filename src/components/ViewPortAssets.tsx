@@ -2,7 +2,7 @@ import { Fragment, lazy, memo, Suspense, useMemo, useState } from "react";
 import { useClips, useCurrentTime } from "../context";
 import {
   useDataEdit,
-  useDebounseSearch,
+  useDebounceSearch,
   useDragDropAssets,
   type Asset,
   type ClipView,
@@ -35,7 +35,7 @@ function ViewPortAssets() {
 
   //* состояние для хранения текста поиска и выбранного типа ассетов для фильтрации отображаемых ассетов в зоне ассетов
   const [search, setSearch] = useState<string>("");
-  const debonse = useDebounseSearch({ value: search, deley: 500 });
+  const debonse = useDebounceSearch({ value: search, delay: 500 });
   const [selectedType, setSelectedType] = useState("all");
 
   //* отфильтрованный массив ассетов для отображения в зоне ассетов в зависимости от текста поиска и выбранного типа ассетов
