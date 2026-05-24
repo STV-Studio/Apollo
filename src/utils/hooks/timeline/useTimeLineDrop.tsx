@@ -1,6 +1,7 @@
 import { useCallback, type DragEvent } from "react";
 import { useClips } from "../../../context";
 import { useFileReader } from "../ui/useFileReader";
+import { createTimelineClip } from "../../helper/createTimelineClip";
 
 interface Props {
   scale: number;
@@ -44,21 +45,16 @@ export function useTimeLineDrop({ scale }: Props) {
 
         if (clip.type === "video") {
           // 🎬 VIDEO
-          addToTrack(targetTrack.id, {
-            id: crypto.randomUUID(),
-            assetId: clip.id,
-            start,
-            name: "unnow",
-            duration: clip.duration,
-            type: "video",
-            groupId,
-            sourceOffset: 0,
-
-            x: 50,
-            y: 50,
-            width: 200,
-            height: 200,
-          });
+          addToTrack(
+            targetTrack.id,
+            createTimelineClip({
+              assetId: clip.id,
+              start,
+              duration: clip.duration,
+              type: "video",
+              groupId,
+            }),
+          );
 
           // 🔊 AUDIO (на следующую дорожку)
           let nextTrack = tracks[trackIndex + 1];
@@ -71,35 +67,28 @@ export function useTimeLineDrop({ scale }: Props) {
             setTracks((prev) => [...prev, nextTrack]);
           }
 
-          addToTrack(nextTrack.id, {
-            id: crypto.randomUUID(),
-            assetId: clip.id,
-            start,
-            name: "unnow",
-            duration: clip.duration,
-            type: "audio",
-            groupId,
-            x: 50,
-            y: 50,
-            width: 200,
-            height: 200,
-            fadeIn: 1,
-            fadeOut: 1,
-          });
+          addToTrack(
+            nextTrack.id,
+            createTimelineClip({
+              assetId: clip.id,
+              start,
+              duration: clip.duration,
+              type: "audio",
+              groupId,
+            }),
+          );
         } else {
           // 🎵 AUDIO или 🖼 IMAGE (не видео)
-          addToTrack(targetTrack.id, {
-            id: crypto.randomUUID(),
-            assetId: clip.id,
-            start,
-            name: "unnow",
-            duration: clip.duration || 5,
-            type: clip.type as "audio" | "image",
-            x: 50,
-            y: 50,
-            width: 200,
-            height: 200,
-          });
+          addToTrack(
+            targetTrack.id,
+            createTimelineClip({
+              assetId: clip.id,
+              start,
+              duration: clip.duration,
+              type: clip.type as "audio" | "image",
+              groupId,
+            }),
+          );
         }
         return; // Завершаем, так как это был внутренний ассет
       }
@@ -116,20 +105,16 @@ export function useTimeLineDrop({ scale }: Props) {
 
           if (newAsset.type === "video") {
             // Видео дорожка
-            addToTrack(targetTrack.id, {
-              id: crypto.randomUUID(),
-              assetId: newAsset.id,
-              start,
-              name: "unnow",
-              duration: newAsset.duration,
-              type: "video",
-              groupId,
-              sourceOffset: 0,
-              x: 50,
-              y: 50,
-              width: 200,
-              height: 200,
-            });
+            addToTrack(
+              targetTrack.id,
+              createTimelineClip({
+                assetId: newAsset.id,
+                start,
+                duration: newAsset.duration,
+                type: "video",
+                groupId,
+              }),
+            );
 
             // Аудио дорожка
             let nextTrack = tracks[trackIndex + 1];
@@ -142,49 +127,38 @@ export function useTimeLineDrop({ scale }: Props) {
               setTracks((prev) => [...prev, nextTrack]);
             }
 
-            addToTrack(nextTrack.id, {
-              id: crypto.randomUUID(),
-              assetId: newAsset.id,
-              start,
-              name: "unnow",
-              duration: newAsset.duration,
-              type: "audio",
-              groupId,
-              x: 50,
-              y: 50,
-              width: 200,
-              height: 200,
-              fadeIn: 1,
-              fadeOut: 1,
-            });
+            addToTrack(
+              nextTrack.id,
+              createTimelineClip({
+                assetId: newAsset.id,
+                start,
+                duration: newAsset.duration,
+                type: "audio",
+                groupId,
+              }),
+            );
           } else if (newAsset.type === "audio") {
-            addToTrack(targetTrack.id, {
-              id: crypto.randomUUID(),
-              assetId: newAsset.id,
-              start,
-              name: "unnow",
-              duration: newAsset.duration,
-              type: "audio",
-              x: 50,
-              y: 50,
-              width: 200,
-              height: 200,
-              fadeIn: 1,
-              fadeOut: 1,
-            });
+            addToTrack(
+              targetTrack.id,
+              createTimelineClip({
+                assetId: newAsset.id,
+                start,
+                duration: newAsset.duration,
+                type: "audio",
+                groupId,
+              }),
+            );
           } else if (newAsset.type === "image") {
-            addToTrack(targetTrack.id, {
-              id: crypto.randomUUID(),
-              assetId: newAsset.id,
-              start,
-              name: "unnow",
-              duration: newAsset.duration || 5,
-              type: "image",
-              x: 50,
-              y: 50,
-              width: 200,
-              height: 200,
-            });
+            addToTrack(
+              targetTrack.id,
+              createTimelineClip({
+                assetId: newAsset.id,
+                start,
+                duration: newAsset.duration,
+                type: "image",
+                groupId,
+              }),
+            );
           }
         }
       }
