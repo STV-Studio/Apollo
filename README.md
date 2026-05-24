@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/favicon.svg" width="96" alt="Apollo" />
+  <img src="docs/logo_apollo.svg" width="96" alt="Apollo" />
   <h1>Apollo</h1>
   <p>A non-linear desktop video & audio editor built with React and Electron.</p>
 
