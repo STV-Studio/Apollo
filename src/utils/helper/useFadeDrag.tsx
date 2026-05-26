@@ -109,22 +109,33 @@ export function useFadeDrag({ trackID, clip, scale }: Props) {
       const point = clip.volumePoints?.find((p) => p.id === pointId);
       if (!point) return;
 
-      const startX = e.clientX;
-      const startY = e.clientY;
+      const H = 20;
+      const TOP_PADDING = 2;
+      const BOTTOM_PADDING = 2;
 
+      const MIN_Y = TOP_PADDING;
+      const MAX_Y = H - BOTTOM_PADDING;
+
+      const startX = e.clientX;
+      const startMouseY = e.clientY;
+
+      const startPointY = H - point.value * H;
       const startTime = point.time;
-      const startValue = point.value;
 
       const handleMove = (moveEvent: MouseEvent) => {
         const deltaX = moveEvent.clientX - startX;
-        const deltaY = moveEvent.clientY - startY;
+        const deltaY = moveEvent.clientY - startMouseY;
 
         const nextTime = Math.max(
           0,
           Math.min(startTime + deltaX / scale, clip.duration),
         );
 
-        const nextValue = Math.max(0, Math.min(startValue - deltaY / 40, 1));
+        const nextY = Math.max(MIN_Y, Math.min(startPointY + deltaY, MAX_Y));
+
+        const MIN_VALUE = 0.1;
+
+        const nextValue = Math.max(MIN_VALUE, Math.min((H - nextY) / H, 1));
 
         updateClip(trackID, clip.id, {
           volumePoints: (clip.volumePoints ?? []).map((p) =>

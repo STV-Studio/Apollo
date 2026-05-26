@@ -46,7 +46,7 @@ function FadeClip({ clip, trackID, scale }: Props) {
     const y = e.clientY - rect.top;
 
     const localTime = x / scale;
-    const value = 1 - y / 40;
+    const value = 1 - y / 20;
 
     const point = createCustomeVolumePoints({ clip, localTime, value });
 
