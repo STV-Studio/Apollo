@@ -2,12 +2,13 @@ import { memo } from "react";
 import {
   createCustomeVolumePoints,
   getCustomVolumePoints,
-  getVolumePoints,
   useFadeDrag,
   type TimelineClip,
 } from "../../utils";
 
 import { useClips } from "../../context";
+import { getSmoothVolumePath } from "../../utils/helper/getSmoothVolumePath";
+import { getAllVolumePoints } from "../../utils/helper/getAllVolumePoints";
 
 interface Props {
   clip: TimelineClip;
@@ -34,6 +35,13 @@ function FadeClip({ clip, trackID, scale }: Props) {
   const fadeOutPx = Math.max(fadeOut * scale, MIN_PX);
 
   const customVolumePoints = getCustomVolumePoints({ clip, scale });
+
+  const allPoints = getAllVolumePoints({
+    clip,
+    scale,
+  });
+
+  const smoothPath = getSmoothVolumePath(allPoints);
 
   const width = duration * scale;
   const top = 5;
@@ -75,12 +83,16 @@ function FadeClip({ clip, trackID, scale }: Props) {
         height={20}
         onDoubleClick={handleAddedNewVolumePoint}
       >
-        <polyline
-          points={getVolumePoints({ clip, scale })}
-          stroke="white"
-          strokeWidth="2"
-          fill="none"
+        <path
+          d={`
+            ${smoothPath}
+              L ${width} 20
+              L 0 20
+              Z
+            `}
+          fill="rgba(255,255,255,0.12)"
         />
+        <path d={smoothPath} stroke="white" strokeWidth="2" fill="none" />
 
         {points}
 
