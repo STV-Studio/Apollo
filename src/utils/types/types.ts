@@ -210,6 +210,15 @@ export type TimelineClip = {
    * RU: Длительность плавного затухания звука.
    */
   fadeOut?: number;
+
+  /**
+   * EN: Custom volume automation points.
+   * Allows for precise volume control over time.
+   *
+   * RU: Пользовательские точки автоматизации громкости.
+   * Позволяют точно контролировать громкость во времени.
+   */
+  volumePoints?: VolumePoint[];
 };
 
 /**
@@ -268,6 +277,13 @@ export const ErrorMessage = "Context is not defined";
 
 
 
+/**
+ * EN: Volume automation point for precise control.
+ * Each point defines a time and volume level.
+ *
+ * RU: Точка автоматизации громкости для точного контроля.
+ * Каждая точка задаёт время и уровень громкости.
+ */
 export type VolumePoint = {
   id: string;
   time: number;
