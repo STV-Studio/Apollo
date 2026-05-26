@@ -53,7 +53,7 @@ interface Props{
 
 
 
-export function getCustomeVolumePoints({clip, localTime, value = 1}: Props){
+export function createCustomeVolumePoints({clip, localTime, value = 1}: Props){
 
     const newPoint = {
         id: crypto.randomUUID(),

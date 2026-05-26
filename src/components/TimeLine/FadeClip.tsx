@@ -1,10 +1,13 @@
 import { memo } from "react";
 import {
+  createCustomeVolumePoints,
   getCustomVolumePoints,
   getVolumePoints,
   useFadeDrag,
   type TimelineClip,
 } from "../../utils";
+
+import { useClips } from "../../context";
 
 interface Props {
   clip: TimelineClip;
@@ -23,6 +26,8 @@ function FadeClip({ clip, trackID, scale }: Props) {
     scale,
   );
 
+  const { updateClip } = useClips();
+
   const fadeIn = clip.fadeIn ?? 0;
   const fadeOut = clip.fadeOut ?? 0;
 
@@ -35,6 +40,23 @@ function FadeClip({ clip, trackID, scale }: Props) {
 
   const width = duration * scale;
   const top = 5;
+
+  const handleAddedNewVolumePoint = (e: React.MouseEvent<SVGSVGElement>) => {
+    e.stopPropagation();
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const localTime = x / scale;
+    const value = 1 - y / 40;
+
+    const point = createCustomeVolumePoints({ clip, localTime, value });
+
+    updateClip(trackID, clip.id, {
+      volumePoints: [...(clip.volumePoints ?? []), point],
+    });
+  };
 
   const points = customVolumePoints.map(({ x, y, id }) => (
     <circle
@@ -49,7 +71,12 @@ function FadeClip({ clip, trackID, scale }: Props) {
 
   return (
     <div className="fade_block">
-      <svg className="volume-line" width={duration * scale} height={20}>
+      <svg
+        className="volume-line"
+        width={duration * scale}
+        height={20}
+        onDoubleClick={handleAddedNewVolumePoint}
+      >
         <polyline
           points={getVolumePoints({ clip, scale })}
           stroke="white"
