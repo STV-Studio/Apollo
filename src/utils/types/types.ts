@@ -265,3 +265,11 @@ export type ActiveLayers = ClipWithTrack[];
  * неинициализированного React Context.
  */
 export const ErrorMessage = "Context is not defined";
+
+
+
+export type VolumePoint = {
+  id: string;
+  time: number;
+  value: number;
+}
