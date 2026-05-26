@@ -1,5 +1,10 @@
 import { memo } from "react";
-import { getVolumePoints, useFadeDrag, type TimelineClip } from "../../utils";
+import {
+  getCustomVolumePoints,
+  getVolumePoints,
+  useFadeDrag,
+  type TimelineClip,
+} from "../../utils";
 
 interface Props {
   clip: TimelineClip;
@@ -26,8 +31,22 @@ function FadeClip({ clip, trackID, scale }: Props) {
   const fadeInPx = Math.max(fadeIn * scale, MIN_PX);
   const fadeOutPx = Math.max(fadeOut * scale, MIN_PX);
 
+  const customVolumePoints = getCustomVolumePoints({ clip, scale });
+
   const width = duration * scale;
   const top = 5;
+
+  const points = customVolumePoints.map(({ x, y, id }) => (
+    <circle
+      key={id}
+      cx={x}
+      cy={y}
+      r={5}
+      fill="yellow"
+      style={{ pointerEvents: "auto", cursor: "move" }}
+    />
+  ));
+
   return (
     <div className="fade_block">
       <svg className="volume-line" width={duration * scale} height={20}>
@@ -37,6 +56,8 @@ function FadeClip({ clip, trackID, scale }: Props) {
           strokeWidth="2"
           fill="none"
         />
+
+        {points}
 
         {/* fade in handle */}
         <circle
