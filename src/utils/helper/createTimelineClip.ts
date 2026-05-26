@@ -36,5 +36,7 @@ export function createTimelineClip({
 
     fadeIn: type === "audio" ? 1 : 0,
     fadeOut: type === "audio" ? 1 : 0,
+
+    volumePoints: type === "audio" ? [] : undefined,
   };
 }
