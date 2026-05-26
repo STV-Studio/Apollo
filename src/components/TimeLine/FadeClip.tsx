@@ -16,15 +16,12 @@ interface Props {
 }
 
 function FadeClip({ clip, trackID, scale }: Props) {
-  const { id, duration } = clip;
-  const handleFadeDrag = useFadeDrag(
+  const { duration } = clip;
+  const { handleFadeDrag, handlePointDrag } = useFadeDrag({
     trackID,
-    id,
-    clip.fadeIn ?? 0,
-    clip.fadeOut ?? 0,
-    duration,
+    clip,
     scale,
-  );
+  });
 
   const { updateClip } = useClips();
 
@@ -66,6 +63,7 @@ function FadeClip({ clip, trackID, scale }: Props) {
       r={5}
       fill="yellow"
       style={{ pointerEvents: "auto", cursor: "move" }}
+      onMouseDown={(e) => handlePointDrag(e, id)}
     />
   ));
 
