@@ -1,5 +1,5 @@
 import { memo, useMemo, type ChangeEvent, type KeyboardEvent } from "react";
-import { HoverBlock, onKey, type ClipView } from "../utils";
+import { formatTime, HoverBlock, onKey, type ClipView } from "../utils";
 
 import Select_Option from "./Select_Option";
 import ButtonBlockOptions from "./ButtonBlockOptions";
@@ -72,7 +72,7 @@ function AssetItem({
           <p>Type: {clip.type}</p>
           <AssetPreview clip={clip} currentTime={currentTime} />
           <p>Name: {clip.name || clip.id.slice(0, 4)}</p>
-          <p>Duration: {clip.duration.toFixed(2)}s</p>
+          <p>Duration: {formatTime({ time: clip.duration })}s</p>
           {clip.description && <p>Description: {clip.description}</p>}
         </HoverBlock>
       )}
