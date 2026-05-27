@@ -32,3 +32,7 @@
     padding: 4;
 }
 
+.file_from_dropzone:has(.box_all:hover) .hover-block {
+    opacity: 0;
+    visibility: hidden;
+}

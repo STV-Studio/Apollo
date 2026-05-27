@@ -60,7 +60,11 @@ function ViewPortAssets() {
           const img = new Image();
           e.dataTransfer.setDragImage(img, 0, 0); //  убивает ghost
 
+          document.body.classList.add("is-dragging");
           e.dataTransfer.setData("clipId", clip.id);
+        }}
+        onDragEnd={() => {
+          document.body.classList.remove("is-dragging");
         }}
         key={clip.id}
       >
