@@ -79,7 +79,7 @@ function AssetItem({
     >
       <AssetPreview clip={clip} currentTime={currentTime} />
 
-      {!isEditing && (
+      {!isEditing && !isOpen && (
         <HoverBlock>
           {/* Заголовок карточки с типом ассета */}
           <div className="hover-header">
