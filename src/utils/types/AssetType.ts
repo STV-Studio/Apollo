@@ -18,6 +18,8 @@ export type BaseAsset = {
   duration: number;
   /** EN: Display name. RU: Отображаемое имя. */
   name?: string;
+
+  description?: string;
 };
 
 /**

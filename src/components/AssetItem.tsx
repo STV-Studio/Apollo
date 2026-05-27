@@ -1,9 +1,16 @@
 import { memo, useMemo, type ChangeEvent, type KeyboardEvent } from "react";
-import { onKey, type ClipView } from "../utils";
+import {
+  formatTime,
+  HoverBlock,
+  onKey,
+  useModal,
+  type ClipView,
+} from "../utils";
 
 import Select_Option from "./Select_Option";
 import ButtonBlockOptions from "./ButtonBlockOptions";
 import AssetPreview from "./AssetPreview";
+import AddDescriptionModal from "../Modals/AddDescriptionModal";
 
 interface AssetItemProps {
   clip: ClipView;
@@ -27,6 +34,7 @@ function AssetItem({
   currentTime,
 }: AssetItemProps) {
   const { id, name } = clip;
+  const { handleClose, handleToggle, isOpen, handleIsOpen } = useModal();
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     const press = onKey(e);
@@ -64,8 +72,57 @@ function AssetItem({
   }
 
   return (
-    <div className="file_from_dropzone" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="file_from_dropzone"
+      onClick={(e) => e.stopPropagation()}
+      onDoubleClick={handleIsOpen}
+    >
       <AssetPreview clip={clip} currentTime={currentTime} />
+
+      {!isEditing && !isOpen && (
+        <HoverBlock>
+          {/* Заголовок карточки с типом ассета */}
+          <div className="hover-header">
+            <span className="hover-badge">{clip.type}</span>
+          </div>
+
+          {/* Зона превью */}
+          <div className="hover-preview-wrapper">
+            <AssetPreview clip={clip} currentTime={currentTime} />
+          </div>
+
+          {/* Техническая инфа */}
+          <div className="hover-meta">
+            <div className="meta-row">
+              <span className="meta-label">Name</span>
+              <span className="meta-value">
+                {clip.name || clip.id.slice(0, 4)}
+              </span>
+            </div>
+            <div className="meta-row">
+              <span className="meta-label">Duration</span>
+              <span className="meta-value">
+                {formatTime({ time: clip.duration })}s
+              </span>
+            </div>
+
+            {clip.description && (
+              <div className="meta-row description-row">
+                <span className="meta-label">Description</span>
+                <p className="meta-value desc-text">{clip.description}</p>
+              </div>
+            )}
+          </div>
+        </HoverBlock>
+      )}
+
+      <AddDescriptionModal
+        clip={clip}
+        assetId={id}
+        isOpen={isOpen}
+        handleClose={handleClose}
+        handleToggle={handleToggle}
+      />
 
       <div
         className="ID_NAME"
