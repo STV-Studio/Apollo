@@ -43,5 +43,18 @@
     &.active {
         transform: scale(1);
     }
+
+    position: relative;
 }
 
+.modal-close{
+    position: absolute;
+    background-color: red;
+    color: white;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
