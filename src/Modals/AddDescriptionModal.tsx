@@ -1,7 +1,7 @@
 import AssetPreview from "../components/AssetPreview";
 import { useClips } from "../context";
 import { formatTime, Modal, type ClipView } from "../utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -22,6 +22,8 @@ export default function AddDescriptionModal({
   const { name, type, duration, size, id } = clip;
   const [description, setDescription] = useState<string>("");
 
+  const [message, setMessage] = useState<string>("");
+
   const handleChangeDescription = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
@@ -29,14 +31,29 @@ export default function AddDescriptionModal({
   };
 
   const handleSave = () => {
+    if (description.length === 0) {
+      setMessage("Description cannot be empty.");
+      return;
+    }
     setClips((prev) =>
       prev.map((item) =>
         item.id === assetId ? { ...item, description } : item,
       ),
     );
+
     handleClose();
+    setMessage("");
     setDescription("");
   };
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage("");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   return (
     <Modal
@@ -51,7 +68,6 @@ export default function AddDescriptionModal({
         </h2>
       </div>
 
-      {/* Контент разбиваем на две колонки для баланса */}
       <div className="modal-body">
         <div className="modal-preview-zone">
           <AssetPreview clip={clip} currentTime={0} />
@@ -87,6 +103,7 @@ export default function AddDescriptionModal({
           onChange={handleChangeDescription}
           style={{ resize: "vertical" }}
         />
+        {message && <p className="error-message">{message}</p>}
 
         <div className="modal-actions">
           <button className="btn-secondary" onClick={handleClose}>

@@ -697,6 +697,34 @@ input[type=file]::file-selector-button {
   background: #2563eb;
 }
 
+.error-message {
+  background: #ff4d4f;
+  color: white;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-size: 13px;
+  animation: fade-in-out 2s ease-in-out forwards;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
 .modal-close {
   position: absolute;
   background-color: red;
@@ -714,11 +742,8 @@ input[type=file]::file-selector-button {
   top: 70px;
   left: 0px;
   z-index: 50;
-  /* 1. ЖЕСТКО ФИКСИРУЕМ РАЗМЕРЫ КАРТОЧКИ */
   width: 240px;
   height: 280px;
-  /* Подоберите высоту, которая вместит превью + текст */
-  /* Делаем флексом, чтобы контент распределялся внутри фиксированной высоты */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -730,7 +755,6 @@ input[type=file]::file-selector-button {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   color: #e0e0e0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  /* Анимации */
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px) scale(0.98);
@@ -740,7 +764,6 @@ input[type=file]::file-selector-button {
 .hover-block .hover-header {
   margin-bottom: 8px;
   flex-shrink: 0;
-  /* Шапка не должна сжиматься */
 }
 .hover-block .hover-header .hover-badge {
   display: inline-block;
@@ -752,13 +775,9 @@ input[type=file]::file-selector-button {
   color: #aaa;
   border-radius: 4px;
 }
-.hover-block {
-  /* 2. ЖЕСТКО ФИКСИРУЕМ РАЗМЕР ПРЕВЬЮ */
-}
 .hover-block .hover-preview-wrapper {
   width: 100%;
   height: 130px;
-  /* Все превью (картинки, видео, слайдеры) будут ровно 130px */
   background: #111;
   border-radius: 6px;
   overflow: hidden;
@@ -768,8 +787,6 @@ input[type=file]::file-selector-button {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  /* Контейнер не будет сжиматься */
-  /* 3. ЗАСТАВЛЯЕМ ЛЮБОЙ ВНУТРЕННИЙ КОНТЕНТ ВПИСЫВАТЬСЯ В РАМКИ */
 }
 .hover-block .hover-preview-wrapper img,
 .hover-block .hover-preview-wrapper video,
@@ -779,23 +796,15 @@ input[type=file]::file-selector-button {
 .hover-block .hover-preview-wrapper .audio_preview {
   width: 100% !important;
   height: 100% !important;
-  /* Занимает ровно 130px высоты */
-  /* object-fit: cover аккуратно обрежет края, чтобы картинка заполнила всё пространство */
-  /* Если важно видеть картинку целиком без обрезки — поменяйте на contain */
   -o-object-fit: cover;
      object-fit: cover;
   display: block;
-}
-.hover-block {
-  /* Мета-информация занимает оставшееся место */
 }
 .hover-block .hover-meta {
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex-grow: 1;
-  /* Занимает оставшееся пространство */
-  /* Если описание слишком длинное, включим внутренний скролл, чтобы карточка не росла */
   overflow-y: auto;
 }
 .hover-block .hover-meta .meta-row {
