@@ -114,13 +114,18 @@ interface Props {
 function Modal({ isOpen, handleClose, handleToggle, children }: Props) {
   return (
     <div
-      className={isOpen ? "modal open" : "modal closed"}
+      className={`modal-overlay ${isOpen ? "active" : ""}`}
       onClick={handleToggle}
     >
-      <div onClick={(e) => e.stopPropagation()} className="modal-content">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`modal ${isOpen ? "active" : "not_active"}`}
+      >
         {children}
       </div>
-      <button onClick={handleClose}>X</button>
+      <button className="modal-close" onClick={handleClose}>
+        X
+      </button>
     </div>
   );
 }
