@@ -59,11 +59,78 @@
     cursor: pointer;
 }
 
-.hover-block{
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+.hover-block {
+  position: absolute;
+
+  top: 70px;
+  right: 5px;
+
+  z-index: 50;
+
+  min-width: 180px;
+  max-width: 350px;
+
+  padding: 8px 10px;
+
+  background: rgba(18, 18, 18, 0.92);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 8px;
+
+  backdrop-filter: blur(10px);
+
+  color: white;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.35);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform:
+    translateY(-4px)
+    scale(0.98);
+
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease,
+    visibility 0.16s ease;
+
+  transition-delay: 0s;
+
+  pointer-events: none;
+
+  img{
+    width: 100%;
+    max-width: 170px;
+    height: auto;
+    object-fit: cover;
+
+    margin-bottom: 8px;
+  }
+
+    .asset_image, .asset_video,.audio_preview {
+        width: 100%;
+        max-width: 170px;
+        height: auto;
+        border: none;
+        object-fit: cover;
+        background-color: rgba(18, 18, 18, 0.92);
+
+    &:hover {
+        cursor: default;
+        background-color: rgba(18, 18, 18, 0.92);
+    }
+  }
+}
+
+
+.is-dragging .hover-block {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none;
 }

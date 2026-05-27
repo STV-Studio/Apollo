@@ -66,6 +66,15 @@
     }
 }
 
+
+.file_from_dropzone:hover .hover-block {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+
+    transition-delay: 0.4s;
+}
+
 .asset_image, .asset_video,.audio_preview {
     width: 200px;
     border: 1px solid #2A2A2A;

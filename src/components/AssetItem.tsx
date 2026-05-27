@@ -1,5 +1,5 @@
 import { memo, useMemo, type ChangeEvent, type KeyboardEvent } from "react";
-import { onKey, type ClipView } from "../utils";
+import { HoverBlock, onKey, type ClipView } from "../utils";
 
 import Select_Option from "./Select_Option";
 import ButtonBlockOptions from "./ButtonBlockOptions";
@@ -66,6 +66,16 @@ function AssetItem({
   return (
     <div className="file_from_dropzone" onClick={(e) => e.stopPropagation()}>
       <AssetPreview clip={clip} currentTime={currentTime} />
+
+      {!isEditing && (
+        <HoverBlock>
+          <p>Type: {clip.type}</p>
+          <AssetPreview clip={clip} currentTime={currentTime} />
+          <p>Name: {clip.name || clip.id.slice(0, 4)}</p>
+          <p>Duration: {clip.duration.toFixed(2)}s</p>
+          {clip.description && <p>Description: {clip.description}</p>}
+        </HoverBlock>
+      )}
 
       <div
         className="ID_NAME"
