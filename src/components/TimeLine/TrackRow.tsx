@@ -2,12 +2,15 @@ import { memo, useMemo } from "react";
 import { useClipEdit, useDataEdit, type Track } from "../../utils";
 import { useClips } from "../../context";
 import ClipItem from "./ClipItem";
+import type { GostClip } from "../../utils/hooks/timeline/useTimeLineDrop";
+import GhostClip from "./GostClip";
 
 interface Props {
   track: Track;
   scale: number;
+  gostClip: GostClip[];
 }
-function TrackRow({ track, scale }: Props) {
+function TrackRow({ track, scale, gostClip }: Props) {
   const { clips } = useClips();
 
   const { handleClipEdit } = useDataEdit();
@@ -64,7 +67,19 @@ function TrackRow({ track, scale }: Props) {
 
   return (
     <div className="track_row_wrapper">
-      <div className="track_row">{TRACKS}</div>
+      <div className="track_row">
+        {TRACKS}
+
+        {gostClip
+          .filter((ghost) => ghost.trackId === track.id)
+          .map((ghost) => (
+            <GhostClip
+              key={`${ghost.trackId}-${ghost.type}`}
+              ghostClip={[ghost]}
+              scale={scale}
+            />
+          ))}
+      </div>
     </div>
   );
 }
