@@ -61,10 +61,14 @@ function ViewPortAssets() {
           e.dataTransfer.setDragImage(img, 0, 0); //  убивает ghost
 
           document.body.classList.add("is-dragging");
+          document.body.dataset.dragClipId = clip.id;
+
           e.dataTransfer.setData("clipId", clip.id);
         }}
         onDragEnd={() => {
           document.body.classList.remove("is-dragging");
+          delete document.body.dataset.dragClipId;
+          window.dispatchEvent(new Event("clearGostClip"));
         }}
         key={clip.id}
       >
