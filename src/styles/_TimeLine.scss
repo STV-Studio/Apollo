@@ -241,3 +241,15 @@
     justify-content: space-between;
     width: 100%;
 }
+
+.ghost_clip {
+    position: absolute;
+    top: 0;
+    height: 55px;
+
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px dashed rgba(255, 255, 255, 0.7);
+
+    pointer-events: none;
+    z-index: 50;
+}

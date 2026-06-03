@@ -32,7 +32,9 @@ function TimeLine() {
   });
 
   // функция обработки дропа клипа на таймлайн
-  const { handleDrop } = useTimeLineDrop({ scale });
+  const { handleDrop, gostClip, handleDragOver, setGostClip } = useTimeLineDrop(
+    { scale },
+  );
 
   // функция обработки клика по таймлайну для перемещения playhead и синхронизации видео
   const { handleTimelineClick } = useTimelineClick({ scale, containerRef });
@@ -77,7 +79,12 @@ function TimeLine() {
         <div className="timeline_sidebar">{track_sidebar}</div>
 
         {/*  TIMELINE */}
-        <div className="timeline" onDrop={handleDrop}>
+        <div
+          className="timeline"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={() => setGostClip([])}
+        >
           <div
             className="timeline_inner"
             ref={containerRef}
@@ -85,7 +92,7 @@ function TimeLine() {
           >
             <div className="timeline_content">
               <TimeRuler scale={scale} STEP={STEP} />
-              <Tracks scale={scale} />
+              <Tracks gostClip={gostClip} scale={scale} />
               <Playhead scale={scale} />
             </div>
           </div>
