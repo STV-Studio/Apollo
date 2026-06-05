@@ -1,8 +1,8 @@
 import { memo, useEffect } from "react";
-import type { Asset, TimelineClip } from "../../utils";
+import { useMoveClip, type Asset, type ClipWithTrack } from "../../utils";
 
 interface Props {
-  clip: TimelineClip & { trackIndex: number };
+  clip: ClipWithTrack;
   asset: Asset;
 }
 
@@ -15,6 +15,8 @@ function LayerItem({ clip, asset }: Props) {
     height: clip.height ?? 200,
     zIndex: clip.trackIndex,
   };
+
+  const { startDrag } = useMoveClip();
 
   useEffect(() => {
     console.log(clip.x, clip.y, clip.width, clip.height);
@@ -29,7 +31,14 @@ function LayerItem({ clip, asset }: Props) {
   }
 
   if (asset.type === "image") {
-    return <img src={asset.src} className="layer" style={style} />;
+    return (
+      <img
+        onMouseDown={(e) => startDrag({ e, clip, trackId: clip.trackId })}
+        src={asset.src}
+        className="layer"
+        style={style}
+      />
+    );
   }
 
   return null;

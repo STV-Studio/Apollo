@@ -6,7 +6,7 @@ interface StartDragProps {
   clip: TimelineClip;
   trackId: string;
 }
-export default function useMoveClip() {
+export function useMoveClip() {
   const { updateClip } = useClips();
 
   const startDrag = useCallback(
@@ -24,16 +24,33 @@ export default function useMoveClip() {
         const deltaX = moveEvent.clientX - startMouseX;
         const deltaY = moveEvent.clientY - startMouseY;
 
-        const nextX = startX + deltaX;
-        const nextY = startY + deltaY;
+        const cinema = document.querySelector(
+          ".cinima",
+        ) as HTMLDivElement | null;
+        if (!cinema) return;
+
+        const rect = cinema.getBoundingClientRect();
+
+        const clipWidth = clip.width ?? 200;
+        const clipHeight = clip.height ?? 200;
+
+        const nextX = Math.max(
+          0,
+          Math.min(startX + deltaX, rect.width - clipWidth),
+        );
+
+        const nextY = Math.max(
+          0,
+          Math.min(startY + deltaY, rect.height - clipHeight),
+        );
 
         if (nextX === clip.x && nextY === clip.y) {
           return;
         }
 
         updateClip(trackId, clip.id, {
-          x: startX + deltaX,
-          y: startY + deltaY,
+          x: nextX,
+          y: nextY,
         });
       };
 

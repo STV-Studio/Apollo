@@ -17,7 +17,7 @@
     isolation: isolate;
 }
 
-.cinema {
+.cinima {
 position: relative;
     width: 100%;
     height: 100%;
@@ -42,9 +42,10 @@ position: absolute;
 
 .layer {
     position: absolute;
-    pointer-events: none;
+    pointer-events: auto;
     object-fit: contain;
     z-index: 1;
+    cursor: move;
 }
 
 

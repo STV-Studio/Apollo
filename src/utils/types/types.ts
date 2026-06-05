@@ -255,6 +255,7 @@ export type ClipWithTrack = TimelineClip & {
    * RU: Индекс дорожки.
    */
   trackIndex: number;
+  trackId: string;
 };
 
 
