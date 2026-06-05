@@ -4,6 +4,7 @@ export {isOverlap, insertClip} from "./InsertClip"
 export {createAsset} from "./createAsset"
 export {default as HoverBlock} from "./HoverBlock"
 export {default as Modal} from "./Modal"
+export {default as TransformBlock} from "./TransformBlock"
 
 
 export const SCALE = 100;
