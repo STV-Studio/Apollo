@@ -48,6 +48,9 @@ export function useResizeClipViewport() {
       const deltaX = moveEvent.clientX - startMouseX;
       const deltaY = moveEvent.clientY - startMouseY;
 
+      const isShift = moveEvent.shiftKey;
+      const ratio = startHeight / startWidth;
+
       let x = startX;
       let y = startY;
       let width = startWidth;
@@ -74,6 +77,27 @@ export function useResizeClipViewport() {
       if (canResizeTop) {
         height = clamp(startHeight - deltaY, MIN_HEIGHT, startY + startHeight);
         y = startY + (startHeight - height);
+      }
+
+      if (isShift) {
+        const isHorizontal = canResizeLeft || canResizeRight;
+
+        if (isHorizontal) {
+          height = width * ratio;
+
+          if (canResizeTop) {
+            y = startY + (startHeight - height);
+          }
+        } else {
+          width = height / ratio;
+
+          if (canResizeLeft) {
+            x = startX + (startWidth - width);
+          }
+        }
+
+        width = clamp(width, MIN_WIDTH, rect.width - x);
+        height = clamp(height, MIN_HEIGHT, rect.height - y);
       }
 
       updateClip(trackId, clip.id, { x, y, width, height });

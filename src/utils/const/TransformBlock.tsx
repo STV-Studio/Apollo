@@ -1,6 +1,10 @@
 import { memo } from "react";
-import type { ReactNode } from "react";
-import { useMoveClip, useResizeClipViewport } from "../hooks";
+import type { CSSProperties, ReactNode } from "react";
+import {
+  useMoveClip,
+  useResizeClipViewport,
+  useRotateClipViewport,
+} from "../hooks";
 import type { ClipWithTrack } from "../types";
 
 interface Props {
@@ -10,28 +14,36 @@ interface Props {
 function TransformBlock({ clip, children }: Props) {
   const { startDrag } = useMoveClip();
   const { startResize } = useResizeClipViewport();
+  const { startRotate } = useRotateClipViewport();
 
-  const style = {
-    position: "absolute" as const,
+  const style: CSSProperties = {
+    position: "absolute",
     left: clip.x ?? 0,
     top: clip.y ?? 0,
     width: clip.width ?? 200,
     height: clip.height ?? 200,
     zIndex: clip.trackIndex,
+    transform: `rotate(${clip.rotation ?? 0}deg)`,
+    transformOrigin: "center center",
   };
 
   return (
     <div
       className="transform_box"
       style={style}
-      onMouseDown={(e) =>
+      onMouseDown={(e) => {
+        e.stopPropagation();
         startDrag({
           e,
           clip,
           trackId: clip.trackId,
-        })
-      }
+        });
+      }}
     >
+      <div
+        className="transform_rotate"
+        onMouseDown={(e) => startRotate(e, clip, clip.trackId)}
+      />
       {children}
       {(
         [

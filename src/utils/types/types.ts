@@ -219,6 +219,12 @@ export type TimelineClip = {
    * Позволяют точно контролировать громкость во времени.
    */
   volumePoints?: VolumePoint[];
+
+  /**
+   * EN: Optional rotation angle in degrees.
+   * RU: Угол поворота в градусах.
+   */
+  rotation?: number;
 };
 
 /**

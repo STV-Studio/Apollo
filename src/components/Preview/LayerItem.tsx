@@ -41,6 +41,8 @@ function LayerItem({ clip, asset }: Props) {
         width: clip.width ?? 200,
         height: clip.height ?? 200,
         zIndex: clip.trackIndex,
+        transform: `rotate(${clip.rotation ?? 0}deg)`,
+        transformOrigin: "center center",
       }}
       onDoubleClick={(e) => {
         e.stopPropagation();
