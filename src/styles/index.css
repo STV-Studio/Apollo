@@ -420,7 +420,7 @@ input[type=file]::file-selector-button {
   isolation: isolate;
 }
 
-.cinema {
+.cinima {
   position: relative;
   width: 100%;
   height: 100%;
@@ -443,10 +443,11 @@ input[type=file]::file-selector-button {
 
 .layer {
   position: absolute;
-  pointer-events: none;
+  pointer-events: auto;
   -o-object-fit: contain;
      object-fit: contain;
   z-index: 1;
+  cursor: move;
 }
 
 .cinema::after {
@@ -458,6 +459,141 @@ input[type=file]::file-selector-button {
   z-index: 5;
 }
 
+.transform_box {
+  position: absolute;
+  cursor: move;
+}
+
+.transform_content {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.layer_image,
+.layer_text {
+  width: 100%;
+  height: 100%;
+}
+
+.layer_image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  -o-object-fit: fill;
+     object-fit: fill;
+  -o-object-position: center;
+     object-position: center;
+}
+
+.layer_svg {
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.transform_resize {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border: 1px solid #111;
+  z-index: 10;
+}
+
+.top-left {
+  left: -4px;
+  top: -4px;
+  cursor: nwse-resize;
+}
+
+.top-right {
+  right: -4px;
+  top: -4px;
+  cursor: nesw-resize;
+}
+
+.bottom-left {
+  left: -4px;
+  bottom: -4px;
+  cursor: nesw-resize;
+}
+
+.bottom-right {
+  right: -4px;
+  bottom: -4px;
+  cursor: nwse-resize;
+}
+
+.left {
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.right {
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.top {
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: ns-resize;
+}
+
+.bottom {
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: ns-resize;
+}
+
+.layer_static {
+  cursor: pointer;
+}
+
+.layer_static .layer_image,
+.layer_static .layer_svg,
+.layer_static .layer_text {
+  width: 100%;
+  height: 100%;
+}
+
+body.rotating,
+body.rotating * {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'><path d='M11.2,19.2C7.2,19.2,3.8,16.2,3.8,11.5S7.2,3.8,11.2,3.8c2.8,0,5.2,1.6,6.4,4L15,9.4h6.4V3l-2.4,2.4C17.2,2.8,14.4,1.2,11.2,1.2C5.4,0,0.5,4.9,0.5,11.5S5.4,23,11.2,23c4.2,0,7.8-2.6,9.4-6.4l-2.8-1.2C16.4,17.8,14,19.2,11.2,19.2z' stroke='black' stroke-width='1.5'/></svg>") 12 4, auto;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.transform_rotate {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: white;
+  z-index: 20;
+  /* Жирный и аккуратный курсор (размер 24x24, hotspot 12 4 на острие стрелки) */
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'><path d='M11.2,19.2C7.2,19.2,3.8,16.2,3.8,11.5S7.2,3.8,11.2,3.8c2.8,0,5.2,1.6,6.4,4L15,9.4h6.4V3l-2.4,2.4C17.2,2.8,14.4,1.2,11.2,1.2C5.4,0,0.5,4.9,0.5,11.5S5.4,23,11.2,23c4.2,0,7.8-2.6,9.4-6.4l-2.8-1.2C16.4,17.8,14,19.2,11.2,19.2z' stroke='black' stroke-width='1.5'/></svg>") 12 4, auto;
+}
+
+@media (max-width: 900px) {
+  .transform_resize {
+    width: 6px;
+    height: 6px;
+  }
+}
 .MENU_OPTION {
   position: absolute;
   top: 100%;

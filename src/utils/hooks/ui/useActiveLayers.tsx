@@ -62,6 +62,7 @@ export function useActiveLayers() {
         const videoWithTrack: ClipWithTrack = {
           ...clip,
           trackIndex,
+          trackId: track.id,
         };
 
         if (!topVideo) {
@@ -77,6 +78,7 @@ export function useActiveLayers() {
         const layerWithTrack: ClipWithTrack = {
           ...clip,
           trackIndex,
+          trackId: track.id,
         };
 
         layers.push(layerWithTrack);
