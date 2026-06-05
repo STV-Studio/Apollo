@@ -17,9 +17,17 @@ function LayerItem({ clip, asset }: Props) {
   }
 
   if (asset.type === "image") {
+    const isSvg = asset.src.includes(".svg") || asset.src.includes("image/svg");
     return (
       <TransformBlock clip={clip}>
-        <img src={asset.src} className="layer_image" draggable={false} />
+        {isSvg ? (
+          <div
+            className="layer_svg"
+            style={{ backgroundImage: `url(${asset.src})` }}
+          />
+        ) : (
+          <img src={asset.src} className="layer_image" draggable={false} />
+        )}
       </TransformBlock>
     );
   }

@@ -45,9 +45,14 @@ export function useResizeClipViewport() {
         Math.min(startHeight + deltaY, MAX_HEIGHT),
       );
 
+      const ratio = startHeight / startWidth;
+      const proportionalHeight = nextWidth * ratio;
+
       switch (direction) {
         case "right":
-          updateClip(trackId, clip.id, { width: nextWidth });
+          updateClip(trackId, clip.id, {
+            width: nextWidth,
+          });
           break;
 
         case "bottom":
@@ -57,7 +62,7 @@ export function useResizeClipViewport() {
         case "corner":
           updateClip(trackId, clip.id, {
             width: nextWidth,
-            height: nextHeight,
+            height: Math.min(proportionalHeight, MAX_HEIGHT),
           });
           break;
       }

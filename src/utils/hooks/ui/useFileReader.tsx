@@ -67,9 +67,26 @@ export function useFileReader() {
     setError(null);
 
     try {
+      let fixedFile = file;
+
+      if (file.type === "image/svg+xml") {
+        const text = await file.text();
+
+        const fixedSvg = text.includes("preserveAspectRatio")
+          ? text.replace(
+              /preserveAspectRatio="[^"]*"/,
+              'preserveAspectRatio="none"',
+            )
+          : text.replace("<svg", '<svg preserveAspectRatio="none"');
+
+        fixedFile = new File([fixedSvg], file.name, {
+          type: "image/svg+xml",
+        });
+      }
+
       // RU: Создаем временную blob-ссылку для локального предпросмотра (видео/картинки)
       // EN: Create a temporary blob URL for local preview (video/image)
-      const url = URL.createObjectURL(file);
+      const url = URL.createObjectURL(fixedFile);
       let duration = 5; // RU: Дефолтное значение для статичных медиафайлов | EN: Default value for static media files
 
       // RU: Если это видео, замеряем его реальную длительность в секундах
