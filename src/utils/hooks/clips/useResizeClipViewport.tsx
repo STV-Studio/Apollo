@@ -1,7 +1,23 @@
 import { useClips } from "../../../context";
 import type { TimelineClip } from "../../types";
 
-type ResizeDirection = "right" | "bottom" | "corner";
+const MIN_WIDTH = 50;
+const MIN_HEIGHT = 50;
+const DEFAULT_WIDTH = 200;
+const DEFAULT_HEIGHT = 200;
+
+type ResizeDirection =
+  | "right"
+  | "left"
+  | "top"
+  | "bottom"
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right";
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(value, max));
 
 export function useResizeClipViewport() {
   const { updateClip } = useClips();
@@ -17,65 +33,58 @@ export function useResizeClipViewport() {
 
     const startMouseX = e.clientX;
     const startMouseY = e.clientY;
-    const startWidth = clip.width ?? 200;
-    const startHeight = clip.height ?? 200;
+
+    const startX = clip.x ?? 0;
+    const startY = clip.y ?? 0;
+    const startWidth = clip.width ?? DEFAULT_WIDTH;
+    const startHeight = clip.height ?? DEFAULT_HEIGHT;
 
     const cinema = document.querySelector(".cinima") as HTMLDivElement | null;
-
     if (!cinema) return;
 
     const rect = cinema.getBoundingClientRect();
-
-    const MAX_WIDTH = rect.width - (clip.x ?? 0);
-    const MAX_HEIGHT = rect.height - (clip.y ?? 0);
 
     const handleMove = (moveEvent: MouseEvent) => {
       const deltaX = moveEvent.clientX - startMouseX;
       const deltaY = moveEvent.clientY - startMouseY;
 
-      const MIN_WIDTH = 50;
-      const MIN_HEIGHT = 50;
+      let x = startX;
+      let y = startY;
+      let width = startWidth;
+      let height = startHeight;
 
-      const nextWidth = Math.max(
-        MIN_WIDTH,
-        Math.min(startWidth + deltaX, MAX_WIDTH),
-      );
-      const nextHeight = Math.max(
-        MIN_HEIGHT,
-        Math.min(startHeight + deltaY, MAX_HEIGHT),
-      );
+      const canResizeLeft = direction.includes("left");
+      const canResizeRight = direction.includes("right");
+      const canResizeTop = direction.includes("top");
+      const canResizeBottom = direction.includes("bottom");
 
-      const ratio = startHeight / startWidth;
-      const proportionalHeight = nextWidth * ratio;
-
-      switch (direction) {
-        case "right":
-          updateClip(trackId, clip.id, {
-            width: nextWidth,
-          });
-          break;
-
-        case "bottom":
-          updateClip(trackId, clip.id, { height: nextHeight });
-          break;
-
-        case "corner":
-          updateClip(trackId, clip.id, {
-            width: nextWidth,
-            height: Math.min(proportionalHeight, MAX_HEIGHT),
-          });
-          break;
+      if (canResizeRight) {
+        width = clamp(startWidth + deltaX, MIN_WIDTH, rect.width - startX);
       }
+
+      if (canResizeLeft) {
+        width = clamp(startWidth - deltaX, MIN_WIDTH, startX + startWidth);
+        x = startX + (startWidth - width);
+      }
+
+      if (canResizeBottom) {
+        height = clamp(startHeight + deltaY, MIN_HEIGHT, rect.height - startY);
+      }
+
+      if (canResizeTop) {
+        height = clamp(startHeight - deltaY, MIN_HEIGHT, startY + startHeight);
+        y = startY + (startHeight - height);
+      }
+
+      updateClip(trackId, clip.id, { x, y, width, height });
     };
 
     const handleUp = () => {
       window.removeEventListener("mousemove", handleMove);
-
       window.removeEventListener("mouseup", handleUp);
     };
 
     window.addEventListener("mousemove", handleMove);
-
     window.addEventListener("mouseup", handleUp);
   };
 

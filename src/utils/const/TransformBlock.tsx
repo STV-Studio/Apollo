@@ -32,22 +32,25 @@ function TransformBlock({ clip, children }: Props) {
         })
       }
     >
-      <div className="transform_content">{children}</div>
-
-      <div
-        className="transform_resize right"
-        onMouseDown={(e) => startResize(e, clip, clip.trackId, "right")}
-      />
-
-      <div
-        className="transform_resize bottom"
-        onMouseDown={(e) => startResize(e, clip, clip.trackId, "bottom")}
-      />
-
-      <div
-        className="transform_resize corner"
-        onMouseDown={(e) => startResize(e, clip, clip.trackId, "corner")}
-      />
+      {children}
+      {(
+        [
+          "top-left",
+          "top-right",
+          "bottom-left",
+          "bottom-right",
+          "left",
+          "right",
+          "top",
+          "bottom",
+        ] as const
+      ).map((dir) => (
+        <div
+          key={dir}
+          className={`transform_resize ${dir}`}
+          onMouseDown={(e) => startResize(e, clip, clip.trackId, dir)}
+        />
+      ))}
     </div>
   );
 }
