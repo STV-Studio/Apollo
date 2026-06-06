@@ -4,7 +4,7 @@ import { createClipsFromRegistry } from "../../helper/createClipsFromRegistry";
 import type { TextAsset } from "../..";
 
 export function useText() {
-  const { addClip, addToTrack, tracks } = useClips();
+  const { addClip, addToTrack, tracks, setClips } = useClips();
   const { currentTime } = useCurrentTime();
 
   const handleAddedText = useCallback(() => {
@@ -31,5 +31,14 @@ export function useText() {
       addToTrack,
     });
   }, [addClip, addToTrack, currentTime, tracks]);
-  return { handleAddedText };
+
+  const handleUpdateText = useCallback(
+    (idText: string, text: string) => {
+      setClips((prev) =>
+        prev.map((clip) => (clip.id === idText ? { ...clip, text } : clip)),
+      );
+    },
+    [setClips],
+  );
+  return { handleAddedText, handleUpdateText };
 }
