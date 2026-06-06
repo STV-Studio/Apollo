@@ -40,5 +40,6 @@ export function createTimelineClip({
     volumePoints: type === "audio" ? [] : undefined,
 
     rotation: 0,
+    fontSize: 24
   };
 }

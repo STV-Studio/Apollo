@@ -1,7 +1,9 @@
-import { memo, useState } from "react";
-import { TransformBlock, useText } from "../../utils";
+import { memo } from "react";
+import { TransformBlock } from "../../utils";
 import type { Asset, ClipWithTrack } from "../../utils/";
 import { useClips } from "../../context";
+import TextView from "./Assets/TextView";
+import ImageVeiw from "./Assets/ImageVeiw";
 
 interface Props {
   clip: ClipWithTrack;
@@ -10,63 +12,29 @@ interface Props {
 
 function LayerItem({ clip, asset }: Props) {
   const { selectedClipId, setSelectedClipId } = useClips();
-  const { handleUpdateText } = useText();
-  const { src, type } = asset as Asset & { src: string; type: string };
-
-  const [isTextEdit, setIsTextEdit] = useState(false);
-  const [newText, setNewText] = useState("");
-
   const isSelected = selectedClipId === clip.id;
 
-  const saveText = () => {
-    if (asset.type !== "text") return;
+  const renderContent = () => {
+    if (asset.type === "text") {
+      return (
+        <TextView
+          asset={asset}
+          clip={clip}
+          isSelected={isSelected}
+          setSelectedClipId={setSelectedClipId}
+        />
+      );
+    }
 
-    handleUpdateText(asset.id, newText);
-    setIsTextEdit(false);
+    if (asset.type === "image" && asset.src) {
+      return <ImageVeiw asset={asset} />;
+    }
+
+    return null;
   };
 
-  const content =
-    asset.type === "text" ? (
-      isTextEdit ? (
-        <input
-          className="layer_text_input"
-          value={newText}
-          autoFocus
-          onChange={(e) => setNewText(e.target.value)}
-          onBlur={saveText}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") saveText();
-
-            if (e.key === "Escape") {
-              setIsTextEdit(false);
-              setNewText(asset.text);
-            }
-          }}
-          onMouseDown={(e) => e.stopPropagation()}
-        />
-      ) : (
-        <div
-          className="layer_text"
-          onDoubleClick={(e) => {
-            e.stopPropagation();
-            setSelectedClipId(clip.id);
-            setNewText(asset.text);
-            setIsTextEdit(true);
-          }}
-        >
-          {asset.text}
-        </div>
-      )
-    ) : type === "image" ? (
-      src.includes(".svg") || src.includes("image/svg") ? (
-        <div className="layer_svg" style={{ backgroundImage: `url(${src})` }} />
-      ) : (
-        <img src={src} className="layer_image" draggable={false} />
-      )
-    ) : null;
-
   if (isSelected) {
-    return <TransformBlock clip={clip}>{content}</TransformBlock>;
+    return <TransformBlock clip={clip}>{renderContent()}</TransformBlock>;
   }
 
   return (
@@ -87,7 +55,7 @@ function LayerItem({ clip, asset }: Props) {
         setSelectedClipId(clip.id);
       }}
     >
-      {content}
+      {renderContent()}
     </div>
   );
 }

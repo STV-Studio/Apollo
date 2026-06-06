@@ -19,6 +19,7 @@ export function useText() {
       size: 5,
       duration: 5,
       name: "Text",
+      fontSize: 20,
     };
 
     addClip(asset);
