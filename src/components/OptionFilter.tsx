@@ -10,6 +10,9 @@ function OptionFilter({ clip, onFilter }: Props) {
   const [selectedColumn, setSelectedColumn] = useState("all");
   const uniquewOptions = [...new Set(clip.map((item) => item.type))];
   const OPTION = uniquewOptions.map((type) => {
+    if (type === "text" || type === "effect") {
+      return null;
+    }
     return (
       <option key={type} value={type}>
         {type}

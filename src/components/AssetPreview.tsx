@@ -2,6 +2,7 @@ import { memo } from "react";
 import type { ClipView } from "../utils";
 import VideoClip from "../utils/const/VideoClip";
 import AudioClip from "./AudioClip";
+import TextClip from "./TextClip";
 
 interface Props {
   clip: ClipView;
@@ -19,6 +20,9 @@ function AssetPreview({ clip, currentTime }: Props) {
       );
     case "audio":
       return <AudioClip />;
+
+    case "text":
+      return <TextClip />;
     default:
       return null;
   }

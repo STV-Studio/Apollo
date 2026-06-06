@@ -53,6 +53,9 @@ function ViewPortAssets() {
   //* отображение ассетов в зоне ассетов с возможностью редактирования имени и перетаскивания на таймлайн
   const ELEMENTS = FilterFiles.map((asset: Asset) => {
     const clip = asset as ClipView;
+    if (clip.type === "text" || clip.type === "effect") {
+      return null;
+    }
     return (
       <div
         draggable

@@ -470,10 +470,28 @@ input[type=file]::file-selector-button {
   overflow: hidden;
 }
 
-.layer_image,
+.transform_box > * {
+  width: 100%;
+  height: 100%;
+}
+
 .layer_text {
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: hidden;
+  text-align: center;
+}
+
+.layer_text_input {
+  display: block;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
 }
 
 .layer_image {

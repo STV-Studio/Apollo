@@ -48,6 +48,7 @@ export function useResizeClipViewport() {
       const deltaX = moveEvent.clientX - startMouseX;
       const deltaY = moveEvent.clientY - startMouseY;
 
+      const isText = clip.type === "text";
       const isShift = moveEvent.shiftKey;
       const ratio = startHeight / startWidth;
 
@@ -100,7 +101,20 @@ export function useResizeClipViewport() {
         height = clamp(height, MIN_HEIGHT, rect.height - y);
       }
 
-      updateClip(trackId, clip.id, { x, y, width, height });
+      const payload: Partial<TimelineClip> = {
+        x,
+        y,
+        width,
+        height,
+      };
+
+      const scale = height / startHeight;
+
+      if (isText && isShift) {
+        payload.fontSize = Math.max(8, (clip.fontSize ?? 24) * scale);
+      }
+
+      updateClip(trackId, clip.id, payload);
     };
 
     const handleUp = () => {
