@@ -124,6 +124,7 @@ export type TextAsset = BaseAsset & {
    * RU: Текст, отображаемый в preview окне.
    */
   text: string;
+  fontSize?: number;
 };
 
 

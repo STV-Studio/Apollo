@@ -225,6 +225,8 @@ export type TimelineClip = {
    * RU: Угол поворота в градусах.
    */
   rotation?: number;
+
+  fontSize?: number;
 };
 
 /**

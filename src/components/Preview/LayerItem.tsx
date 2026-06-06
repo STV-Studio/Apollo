@@ -2,6 +2,8 @@ import { memo } from "react";
 import { TransformBlock } from "../../utils";
 import type { Asset, ClipWithTrack } from "../../utils/";
 import { useClips } from "../../context";
+import TextView from "./Assets/TextView";
+import ImageVeiw from "./Assets/ImageVeiw";
 
 interface Props {
   clip: ClipWithTrack;
@@ -10,25 +12,29 @@ interface Props {
 
 function LayerItem({ clip, asset }: Props) {
   const { selectedClipId, setSelectedClipId } = useClips();
-  const { id } = clip;
-  const { src, type } = asset as Asset & { src: string; type: string };
-  const text = (asset as Asset & { text?: string }).text ?? "";
+  const isSelected = selectedClipId === clip.id;
 
-  const isSelected = selectedClipId === id;
+  const renderContent = () => {
+    if (asset.type === "text") {
+      return (
+        <TextView
+          asset={asset}
+          clip={clip}
+          isSelected={isSelected}
+          setSelectedClipId={setSelectedClipId}
+        />
+      );
+    }
 
-  const content =
-    type === "text" ? (
-      <div className="layer_text">{text}</div>
-    ) : type === "image" ? (
-      src.includes(".svg") || src.includes("image/svg") ? (
-        <div className="layer_svg" style={{ backgroundImage: `url(${src})` }} />
-      ) : (
-        <img src={src} className="layer_image" draggable={false} />
-      )
-    ) : null;
+    if (asset.type === "image" && asset.src) {
+      return <ImageVeiw asset={asset} />;
+    }
+
+    return null;
+  };
 
   if (isSelected) {
-    return <TransformBlock clip={clip}>{content}</TransformBlock>;
+    return <TransformBlock clip={clip}>{renderContent()}</TransformBlock>;
   }
 
   return (
@@ -44,12 +50,12 @@ function LayerItem({ clip, asset }: Props) {
         transform: `rotate(${clip.rotation ?? 0}deg)`,
         transformOrigin: "center center",
       }}
-      onDoubleClick={(e) => {
+      onClick={(e) => {
         e.stopPropagation();
         setSelectedClipId(clip.id);
       }}
     >
-      {content}
+      {renderContent()}
     </div>
   );
 }
