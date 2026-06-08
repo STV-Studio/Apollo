@@ -10,7 +10,7 @@ function OptionFilter({ clip, onFilter }: Props) {
   const [selectedColumn, setSelectedColumn] = useState("all");
   const uniquewOptions = [...new Set(clip.map((item) => item.type))];
   const OPTION = uniquewOptions.map((type) => {
-    if (type === "text" || type === "effect") {
+    if (type === "text" || type === "effect" || type === "shapes") {
       return null;
     }
     return (
