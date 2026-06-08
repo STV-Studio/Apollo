@@ -1,40 +1,44 @@
-import { useCallback, useMemo, useState } from "react";
-import type { MouseEvent } from "react";
-import type { ShapeAsset, ShapeType } from "../../types";
+import { useMemo, useCallback, useState } from "react";
+import type { ReactNode, MouseEvent } from "react";
+import type { ShapeType } from "../../utils";
+import { DrawShapeContext } from "./DrawShapeContext";
 
-type DraftShape = {
+interface Props {
+  children: ReactNode;
+}
+
+export type DraftShape = {
   x: number;
   y: number;
   width: number;
   height: number;
   type: ShapeType;
 };
-
-export default function useDrawShape() {
-  const [tool, setTool] = useState<ShapeAsset | null>(null);
+export function DrawShapeProvider({ children }: Props) {
+  const [activeShape, setActiveShape] = useState<ShapeType | null>(null);
   const [draftShape, setDraftShape] = useState<DraftShape | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
   const handleStartDraw = useCallback(
     (e: MouseEvent) => {
-      if (!tool) return;
+      if (!activeShape) return;
 
       const x = e.nativeEvent.offsetX;
       const y = e.nativeEvent.offsetY;
 
       setIsDrawing(true);
 
-      const newShape: DraftShape | null = {
+      const newShape: DraftShape = {
         x,
         y,
         width: 0,
         height: 0,
-        type: tool.shapes,
+        type: activeShape,
       };
 
       setDraftShape({ ...newShape });
     },
-    [tool],
+    [activeShape],
   );
 
   const handleDraw = useCallback(
@@ -62,10 +66,28 @@ export default function useDrawShape() {
     setIsDrawing(false);
   }, []);
 
-  const props = useMemo(
-    () => ({ tool, setTool, draftShape }),
-    [tool, setTool, draftShape],
+  const VALUES = useMemo(
+    () => ({
+      draftShape,
+      activeShape,
+      setActiveShape,
+      handleStartDraw,
+      handleDraw,
+      handleFinishDraw,
+    }),
+    [
+      draftShape,
+      activeShape,
+      setActiveShape,
+      handleStartDraw,
+      handleDraw,
+      handleFinishDraw,
+    ],
   );
 
-  return { ...props, handleStartDraw, handleDraw, handleFinishDraw };
+  return (
+    <DrawShapeContext.Provider value={VALUES}>
+      {children}
+    </DrawShapeContext.Provider>
+  );
 }

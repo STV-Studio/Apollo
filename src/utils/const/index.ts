@@ -5,6 +5,7 @@ export {createAsset} from "./createAsset"
 export {default as HoverBlock} from "./HoverBlock"
 export {default as Modal} from "./Modal"
 export {default as TransformBlock} from "./TransformBlock"
+export {default as Dropdown} from "./Dropdown"
 
 
 export const SCALE = 100;

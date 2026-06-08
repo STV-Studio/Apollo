@@ -162,7 +162,7 @@ export type ShapeType =
 
 export type ShapeAsset = BaseAsset & {
   type: "shapes"
-  shapes: ShapeType
+  shapes: ShapeType[]
 }
 
 export type Asset =

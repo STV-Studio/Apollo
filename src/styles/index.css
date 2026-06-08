@@ -1017,4 +1017,94 @@ body.rotating * {
 
 .description_textarea {
   padding: 8px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Наш выпадающий список <ul> */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 999;
+  /* Сброс дефолтных стилей списков */
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
+  /* Скрытие */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  min-width: 150px;
+}
+
+/* Показываем по ховеру */
+.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Мгновенно прячем при клике на любую опцию */
+.dropdown-menu {
+  pointer-events: auto;
+}
+
+.dropdown-menu li {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Элементы списка <li> */
+.dropdown-menu li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #fff;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.dropdown-menu li:hover {
+  background-color: #444;
+}
+
+.shape_rect {
+  width: 100%;
+  height: 100%;
+  background: red;
+}
+
+.shape_circle {
+  width: 100%;
+  height: 100%;
+  background: blue;
+  border-radius: 50%;
+}
+
+.shape_triangle {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: green;
+}
+
+.shape_line {
+  width: 100%;
+  height: 4px;
+  background: white;
+  margin-top: 50%;
+}
+
+.draft_shape {
+  position: absolute;
+  border: 1px dashed white;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  z-index: 9999;
 }/*# sourceMappingURL=index.css.map */
