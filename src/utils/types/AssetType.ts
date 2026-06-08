@@ -153,9 +153,22 @@ export type EffectAsset = BaseAsset & {
  * - `TextAsset`
  * - `EffectAsset`
  */
+export type ShapeType = 
+  | "rect"
+  | "circle"
+  | "triangle"
+  | "line"
+
+
+export type ShapeAsset = BaseAsset & {
+  type: "shapes"
+  shapes: ShapeType[]
+}
+
 export type Asset =
   | VideoAsset
   | AudioAsset
   | ImageAsset
   | TextAsset
   | EffectAsset
+  | ShapeAsset

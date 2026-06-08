@@ -4,6 +4,7 @@ import type { Asset, ClipWithTrack } from "../../utils/";
 import { useClips } from "../../context";
 import TextView from "./Assets/TextView";
 import ImageVeiw from "./Assets/ImageVeiw";
+import ShapeView from "./Assets/ShapeView";
 
 interface Props {
   clip: ClipWithTrack;
@@ -28,6 +29,10 @@ function LayerItem({ clip, asset }: Props) {
 
     if (asset.type === "image" && asset.src) {
       return <ImageVeiw asset={asset} />;
+    }
+
+    if (asset.type === "shapes") {
+      return <ShapeView asset={asset} />;
     }
 
     return null;
