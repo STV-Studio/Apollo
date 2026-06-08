@@ -31,6 +31,13 @@ export const CLIP_REGISTRY = {
     creates: ["effect"],
     defaultDuration: 3,
   },
+
+  shapes: {
+    source: "timeline",
+    color: "#568A85",
+    creates: ["effect"],
+    defaultDuration: 3,
+  }
 } as const;
 
 export type ClipType = keyof typeof CLIP_REGISTRY;
