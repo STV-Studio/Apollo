@@ -19,6 +19,21 @@ function BlockCinima({ children }: Props) {
     setSelectedClipId(null);
     handleStartDraw(e);
   };
+
+  const width = draftShape ? Math.abs(draftShape.width) : 0;
+  const height = draftShape ? Math.abs(draftShape.height) : 0;
+
+  const x = draftShape
+    ? draftShape.width < 0
+      ? draftShape.x - width
+      : draftShape.x
+    : 0;
+
+  const y = draftShape
+    ? draftShape.height < 0
+      ? draftShape.y - height
+      : draftShape.y
+    : 0;
   return (
     <div
       onMouseDown={handleMouseDown}
@@ -31,10 +46,10 @@ function BlockCinima({ children }: Props) {
         <div
           className="draft_shape"
           style={{
-            left: draftShape.x,
-            top: draftShape.y,
-            width: draftShape.width,
-            height: draftShape.height,
+            left: x,
+            top: y,
+            width,
+            height,
           }}
         />
       )}
