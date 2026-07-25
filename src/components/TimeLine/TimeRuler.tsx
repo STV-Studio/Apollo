@@ -41,22 +41,25 @@ function TimeRuler({ scale, STEP }: Props) {
   // Расчет только ВИДИМЫХ индексов
   const visibleIndices = useMemo(() => {
     const itemWidth = calculatedStep * scale;
-    const TOTAL_TICKS = Math.ceil(MAX_TIME / calculatedStep) + 1;
-    const OVERSCAN = 3;
+    const maxIndex = Math.floor(MAX_TIME / calculatedStep);
 
+    const OVERSCAN = 2;
     const startIndex = Math.max(
       0,
       Math.floor(viewport.scrollLeft / itemWidth) - OVERSCAN,
     );
+
     const endIndex = Math.min(
-      TOTAL_TICKS,
+      maxIndex + 1,
       Math.ceil((viewport.scrollLeft + viewport.clientWidth) / itemWidth) +
         OVERSCAN,
     );
 
     const indices: number[] = [];
     for (let i = startIndex; i < endIndex; i++) {
-      indices.push(i);
+      if (i * calculatedStep <= MAX_TIME) {
+        indices.push(i);
+      }
     }
     return indices;
   }, [calculatedStep, scale, MAX_TIME, viewport]);
