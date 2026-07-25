@@ -20,14 +20,10 @@ function TimeRuler({ scale, STEP }: Props) {
   // Расчет максимального времени
   const MAX_TIME = useMemo(() => {
     const allClips = tracks.flatMap((track) => track.clips);
-    const DEFAULT_TIME = 46;
 
-    if (allClips.length === 0) return DEFAULT_TIME;
+    if (allClips.length === 0) return 30;
 
-    return Math.max(
-      Math.max(...allClips.map((c) => c.start + c.duration)),
-      DEFAULT_TIME,
-    );
+    return Math.max(...allClips.map(({ start, duration }) => start + duration));
   }, [tracks]);
 
   // Расчет адаптивного шага с использованием NICE_STEPS из твоего хука
