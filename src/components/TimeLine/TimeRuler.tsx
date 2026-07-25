@@ -1,5 +1,8 @@
-import { memo } from "react";
+import { memo, useRef, useMemo } from "react";
 import { useClips } from "../../context";
+
+import { TickItem } from "./TickItem";
+import { useScrollParent, useTimeFormat } from "../../utils";
 
 interface Props {
   scale: number;
@@ -8,44 +11,87 @@ interface Props {
 
 function TimeRuler({ scale, STEP }: Props) {
   const { tracks } = useClips();
+  const { formatTime, NICE_STEPS } = useTimeFormat();
+  const rulerRef = useRef<HTMLUListElement>(null);
 
-  const allClips = tracks.flatMap((track) => track.clips);
+  // Кастомный хук слежки за скроллом
+  const viewport = useScrollParent(rulerRef, scale);
 
-  const DEFAULT_TIME = 46;
+  // Расчет максимального времени
+  const MAX_TIME = useMemo(() => {
+    const allClips = tracks.flatMap((track) => track.clips);
+    const DEFAULT_TIME = 46;
 
-  const MAX_TIME =
-    allClips.length === 0
-      ? DEFAULT_TIME
-      : Math.max(
-          Math.max(...allClips.map((c) => c.start + c.duration)),
-          DEFAULT_TIME,
-        );
+    if (allClips.length === 0) return DEFAULT_TIME;
 
-  const TICKS = Math.ceil(MAX_TIME / STEP);
+    return Math.max(
+      Math.max(...allClips.map((c) => c.start + c.duration)),
+      DEFAULT_TIME,
+    );
+  }, [tracks]);
+
+  // Расчет адаптивного шага с использованием NICE_STEPS из твоего хука
+  const calculatedStep = useMemo(() => {
+    const TARGET_PIXELS_BETWEEN_TICKS = 90;
+    const targetTimeStep = TARGET_PIXELS_BETWEEN_TICKS / scale;
+
+    const multiplier =
+      NICE_STEPS.find((m) => STEP * m >= targetTimeStep) ||
+      NICE_STEPS[NICE_STEPS.length - 1];
+
+    return STEP * multiplier;
+  }, [scale, STEP, NICE_STEPS]);
+
+  // Расчет только ВИДИМЫХ индексов
+  const visibleIndices = useMemo(() => {
+    const itemWidth = calculatedStep * scale;
+    const TOTAL_TICKS = Math.ceil(MAX_TIME / calculatedStep) + 1;
+    const OVERSCAN = 3;
+
+    const startIndex = Math.max(
+      0,
+      Math.floor(viewport.scrollLeft / itemWidth) - OVERSCAN,
+    );
+    const endIndex = Math.min(
+      TOTAL_TICKS,
+      Math.ceil((viewport.scrollLeft + viewport.clientWidth) / itemWidth) +
+        OVERSCAN,
+    );
+
+    const indices: number[] = [];
+    for (let i = startIndex; i < endIndex; i++) {
+      indices.push(i);
+    }
+    return indices;
+  }, [calculatedStep, scale, MAX_TIME, viewport]);
+
+  const totalWidth = MAX_TIME * scale;
 
   return (
-    <div className="ruler" style={{ width: MAX_TIME * scale }}>
-      {Array.from({ length: TICKS }).map((_, i) => {
-        if (scale < 40 && i % 2 !== 0) return null;
-        if (scale < 20 && i % 5 !== 0) return null;
-
-        const time = i * STEP;
-
-        return (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              left: time * scale,
-              borderLeft: "1px solid gray",
-              height: "auto",
-            }}
-          >
-            <span style={{ paddingLeft: 10 }}>{time}</span>
-          </div>
-        );
-      })}
-    </div>
+    <ul
+      ref={rulerRef}
+      className="ruler"
+      style={{
+        width: totalWidth,
+        height: 30,
+        position: "relative",
+        margin: 0,
+        padding: 0,
+        listStyle: "none",
+        borderBottom: "1px solid #333",
+      }}
+    >
+      {visibleIndices.map((index) => (
+        <TickItem
+          key={index}
+          index={index}
+          scale={scale}
+          calculatedStep={calculatedStep}
+          formatTime={formatTime}
+        />
+      ))}
+    </ul>
   );
 }
+
 export default memo(TimeRuler);
