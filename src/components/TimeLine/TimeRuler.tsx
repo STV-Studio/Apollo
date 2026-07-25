@@ -1,18 +1,23 @@
 import { memo, useRef, useMemo } from "react";
+import type { RefObject } from "react";
 import { useClips } from "../../context";
 
 import { TickItem } from "./TickItem";
-import { useScrollParent, useTimeFormat } from "../../utils";
+import { useScrollParent, useTimeFormat, useTimelineClick } from "../../utils";
 
 interface Props {
   scale: number;
   STEP: number;
+  containerRef: RefObject<HTMLDivElement | null>;
 }
 
-function TimeRuler({ scale, STEP }: Props) {
+function TimeRuler({ scale, STEP, containerRef }: Props) {
   const { tracks } = useClips();
   const { formatTime, NICE_STEPS } = useTimeFormat();
   const rulerRef = useRef<HTMLUListElement>(null);
+
+  // функция обработки клика по таймлайну для перемещения playhead и синхронизации видео
+  const { handleTimelineClick } = useTimelineClick({ scale, containerRef });
 
   // Кастомный хук слежки за скроллом
   const viewport = useScrollParent(rulerRef, scale);
@@ -26,7 +31,7 @@ function TimeRuler({ scale, STEP }: Props) {
     return Math.max(...allClips.map(({ start, duration }) => start + duration));
   }, [tracks]);
 
-  // Расчет адаптивного шага с использованием NICE_STEPS из твоего хука
+  // Расчет адаптивного шага
   const calculatedStep = useMemo(() => {
     const TARGET_PIXELS_BETWEEN_TICKS = 90;
     const targetTimeStep = TARGET_PIXELS_BETWEEN_TICKS / scale;
@@ -67,29 +72,41 @@ function TimeRuler({ scale, STEP }: Props) {
   const totalWidth = MAX_TIME * scale;
 
   return (
-    <ul
-      ref={rulerRef}
-      className="ruler"
+    <nav
+      ref={containerRef}
+      onClick={handleTimelineClick}
       style={{
-        width: totalWidth,
-        height: 30,
-        position: "relative",
-        margin: 0,
-        padding: 0,
-        listStyle: "none",
-        borderBottom: "1px solid #333",
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        backgroundColor: "#18181b", // Цвет фона контейнера таймлайна, чтобы клипы не просвечивали
+        width: "100%", // На всю ширину видимого экрана
       }}
     >
-      {visibleIndices.map((index) => (
-        <TickItem
-          key={index}
-          index={index}
-          scale={scale}
-          calculatedStep={calculatedStep}
-          formatTime={formatTime}
-        />
-      ))}
-    </ul>
+      <ul
+        ref={rulerRef}
+        className="ruler"
+        style={{
+          width: totalWidth,
+          height: 30,
+          position: "relative",
+          margin: 0,
+          padding: 0,
+          listStyle: "none",
+          borderBottom: "1px solid #333",
+        }}
+      >
+        {visibleIndices.map((index) => (
+          <TickItem
+            key={index}
+            index={index}
+            scale={scale}
+            calculatedStep={calculatedStep}
+            formatTime={formatTime}
+          />
+        ))}
+      </ul>
+    </nav>
   );
 }
 
