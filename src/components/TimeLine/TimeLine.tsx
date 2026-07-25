@@ -11,7 +11,6 @@ import {
   useClipEdit,
   useTimeLineDrop,
   onKey,
-  useTimelineClick,
 } from "../../utils";
 
 function TimeLine() {
@@ -35,9 +34,6 @@ function TimeLine() {
   const { handleDrop, gostClip, handleDragOver, setGostClip } = useTimeLineDrop(
     { scale },
   );
-
-  // функция обработки клика по таймлайну для перемещения playhead и синхронизации видео
-  const { handleTimelineClick } = useTimelineClick({ scale, containerRef });
 
   // функция обработки нажатия клавиш для управления воспроизведением видео с помощью пробела
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -85,13 +81,13 @@ function TimeLine() {
           onDragOver={handleDragOver}
           onDragLeave={() => setGostClip([])}
         >
-          <div
-            className="timeline_inner"
-            ref={containerRef}
-            onClick={handleTimelineClick}
-          >
+          <div className="timeline_inner">
             <div className="timeline_content">
-              <TimeRuler scale={scale} STEP={STEP} />
+              <TimeRuler
+                containerRef={containerRef}
+                scale={scale}
+                STEP={STEP}
+              />
               <Tracks gostClip={gostClip} scale={scale} />
               <Playhead scale={scale} />
             </div>
