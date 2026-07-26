@@ -10,8 +10,6 @@ import type { Asset, TimelineClip, Track } from "../../utils";
 interface ClipContextProps {
   clips: Asset[];
   timeLineClips: TimelineClip[];
-  selectedClipId: string | null;
-  setSelectedClipId: Dispatch<SetStateAction<string | null>>;
   setClips: Dispatch<SetStateAction<Asset[]>>;
   setTimeLineClips: Dispatch<SetStateAction<TimelineClip[]>>;
   addClip: (clip: Asset) => void;

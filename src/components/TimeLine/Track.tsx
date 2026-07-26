@@ -4,14 +4,13 @@ import type { Track } from "../../utils";
 import type { GostClip } from "../../utils/hooks/timeline/useTimeLineDrop";
 
 interface Props {
-  scale: number;
   tracks: Track;
   gostClip: GostClip[];
 }
-function Track({ scale, tracks, gostClip }: Props) {
+function Track({ tracks, gostClip }: Props) {
   return (
     <div>
-      <TrackRow scale={scale} track={tracks} gostClip={gostClip} />
+      <TrackRow track={tracks} gostClip={gostClip} />
     </div>
   );
 }

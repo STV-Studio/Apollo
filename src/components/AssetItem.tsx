@@ -16,7 +16,6 @@ interface AssetItemProps {
   clip: ClipView;
   isEditing: boolean;
   newName: string;
-  currentTime: number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onEdit: (id: string, currentName: string) => void;
   onSave: (id: string) => void;
@@ -31,7 +30,6 @@ function AssetItem({
   onCancel,
   newName,
   onChange,
-  currentTime,
 }: AssetItemProps) {
   const { id, name } = clip;
   const { handleClose, handleToggle, isOpen, handleIsOpen } = useModal();
@@ -77,7 +75,7 @@ function AssetItem({
       onClick={(e) => e.stopPropagation()}
       onDoubleClick={handleIsOpen}
     >
-      <AssetPreview clip={clip} currentTime={currentTime} />
+      <AssetPreview clip={clip} />
 
       {!isEditing && !isOpen && (
         <HoverBlock>
@@ -88,7 +86,7 @@ function AssetItem({
 
           {/* Зона превью */}
           <div className="hover-preview-wrapper">
-            <AssetPreview clip={clip} currentTime={currentTime} />
+            <AssetPreview clip={clip} />
           </div>
 
           {/* Техническая инфа */}

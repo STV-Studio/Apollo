@@ -1,25 +1,36 @@
+import { useEffect, useState } from "react";
 import { useClips, useCurrentTime } from "../../../context";
 import type { Asset, VideoAsset } from "../../types";
 
 export function useActiveMedia() {
   const { tracks, clips } = useClips();
-  const { currentTime } = useCurrentTime();
+  const { currentTimeRef, subscribeTime } = useCurrentTime();
+
+  const [time, setTime] = useState<number>(0);
+
+  useEffect(() => {
+    setTime(currentTimeRef.current);
+    const unsubscribe = subscribeTime((newTime) => {
+      setTime(newTime);
+    });
+    return unsubscribe;
+  }, [subscribeTime, currentTimeRef]);
 
   const activeVideo = tracks
     .flatMap((t) => t.clips)
     .find(
       (clip) =>
         clip.type === "video" &&
-        currentTime >= clip.start &&
-        currentTime <= clip.start + clip.duration,
+        time >= clip.start &&
+        time <= clip.start + clip.duration,
     );
   const activeAudios = tracks
     .flatMap((t) => t.clips)
     .filter(
       (clip) =>
         clip.type === "audio" &&
-        currentTime >= clip.start &&
-        currentTime <= clip.start + clip.duration,
+        time >= clip.start &&
+        time <= clip.start + clip.duration,
     );
 
   const audioAssets = activeAudios

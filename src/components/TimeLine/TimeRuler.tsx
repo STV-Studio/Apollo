@@ -4,16 +4,16 @@ import { useClips } from "../../context";
 
 import { TickItem } from "./TickItem";
 import { useScrollParent, useTimeFormat, useTimelineClick } from "../../utils";
+import { useZoomEffect } from "../../context/ZoomContext/ZoomContext";
 
 interface Props {
-  scale: number;
-  STEP: number;
   containerRef: RefObject<HTMLDivElement | null>;
 }
 
-function TimeRuler({ scale, STEP, containerRef }: Props) {
+function TimeRuler({ containerRef }: Props) {
   const { tracks } = useClips();
   const { formatTime, NICE_STEPS } = useTimeFormat();
+  const { scale, STEP } = useZoomEffect();
   const rulerRef = useRef<HTMLUListElement>(null);
 
   // функция обработки клика по таймлайну для перемещения playhead и синхронизации видео

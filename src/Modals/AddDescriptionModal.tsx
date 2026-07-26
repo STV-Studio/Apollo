@@ -70,7 +70,7 @@ export default function AddDescriptionModal({
 
       <div className="modal-body">
         <div className="modal-preview-zone">
-          <AssetPreview clip={clip} currentTime={0} />
+          <AssetPreview clip={clip} />
         </div>
 
         <div className="modal-info-zone">

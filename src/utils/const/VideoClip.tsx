@@ -1,23 +1,31 @@
 import { memo, useEffect, useRef } from "react";
+import { useCurrentTime } from "../../context";
 
 interface Props {
   src: string | undefined;
-  currentTime: number;
   start: number;
 }
 
-function VideoClip({ src, currentTime, start }: Props) {
+function VideoClip({ src, start }: Props) {
   const ref = useRef<HTMLVideoElement | null>(null);
+  const { subscribeTime } = useCurrentTime();
 
   useEffect(() => {
-    if (!ref.current) return;
+    // Подписываемся на тики времени без React-ререндеров!
+    const unsubscribe = subscribeTime((time) => {
+      if (!ref.current) return;
 
-    const time = currentTime - start;
+      const videoTime = time - start;
+      if (
+        videoTime >= 0 &&
+        Math.abs(ref.current.currentTime - videoTime) > 0.05
+      ) {
+        ref.current.currentTime = videoTime;
+      }
+    });
 
-    if (time >= 0) {
-      ref.current.currentTime = time;
-    }
-  }, [currentTime, start]);
+    return unsubscribe;
+  }, [start, subscribeTime]);
 
   return (
     <video
@@ -29,4 +37,5 @@ function VideoClip({ src, currentTime, start }: Props) {
     />
   );
 }
+
 export default memo(VideoClip);

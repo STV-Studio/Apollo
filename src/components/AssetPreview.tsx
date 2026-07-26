@@ -6,18 +6,15 @@ import TextClip from "./TextClip";
 
 interface Props {
   clip: ClipView;
-  currentTime: number;
 }
-function AssetPreview({ clip, currentTime }: Props) {
+function AssetPreview({ clip }: Props) {
   const { type, start } = clip;
 
   switch (type) {
     case "image":
       return <img draggable={false} src={clip.src} className="asset_image" />;
     case "video":
-      return (
-        <VideoClip src={clip.src} currentTime={currentTime} start={start} />
-      );
+      return <VideoClip src={clip.src} start={start} />;
     case "audio":
       return <AudioClip />;
 

@@ -1,19 +1,19 @@
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { useDragClip, useResizeClip } from "../../utils";
-import { useClips } from "../../context";
 import type { TimelineClip } from "../../utils/types/types";
 import Option_ListClip from "./Option_ListClip";
 import FadeClip from "./FadeClip";
 import EditBlock from "./EditBlock";
 import { getClipColor } from "../../utils/helper/helperTypeClip";
+import { useSelected } from "../../context/SelectionContext";
+import { useZoomEffect } from "../../context/ZoomContext/ZoomContext";
 
 interface Props {
   clip: TimelineClip;
   trackID: string;
-  scale: number;
-  name: string | undefined;
   isEditing: boolean;
   newName: string;
+  isSelected: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onEdit: (id: string, value: string) => void;
   onSave: (id: string) => void;
@@ -23,18 +23,26 @@ interface Props {
 function ClipItem({
   clip,
   trackID,
-  scale,
   newName,
-  name,
+  isSelected,
   onSave,
   onCancel,
   onChange,
   isEditing,
   onEdit,
 }: Props) {
-  const { start, duration, type, id } = clip;
-  const { onMouseDown } = useDragClip({ start, id, trackID });
-  const { setSelectedClipId, selectedClipId } = useClips();
+  const { start, type, id } = clip;
+  const { scale } = useZoomEffect();
+
+  const { onMouseDown, isDragging } = useDragClip({
+    start,
+    id,
+    trackID,
+    scale,
+  });
+
+  const { setSelectedClipId } = useSelected();
+
   const { onResizeStart } = useResizeClip({
     id: clip.id,
     trackID,
@@ -42,62 +50,71 @@ function ClipItem({
     duration: clip.duration,
     assetId: clip.assetId,
     sourceOffset: clip.sourceOffset ?? 0,
+    scale,
   });
 
   const backgroundColor = getClipColor(type === "default" ? "effect" : type);
 
-  const handleSelectedClip = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) => {
-    e.stopPropagation();
-    setSelectedClipId(id);
-  };
-  const isSelected = selectedClipId === id;
+  const handleSelectedClip = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
+      setSelectedClipId(id);
+    },
+    [id, setSelectedClipId],
+  );
 
-  const props = useMemo(
+  const handleDeselectClip = useCallback(() => {
+    setSelectedClipId(null);
+  }, [setSelectedClipId]);
+
+  const EditBlockProps = useMemo(
+    () => ({
+      isEditing,
+      newName,
+      onChange,
+      onCancel,
+      onSave,
+      onEdit,
+      clip,
+      scale,
+    }),
+    [isEditing, newName, onChange, onCancel, onSave, onEdit, clip, scale],
+  );
+
+  const GostClipProps = useMemo(
     () => ({
       clip,
-      newName,
-      onCancel,
-      onSave,
-      onChange,
-      scale,
-      name,
-      onEdit,
-      isEditing,
       trackID,
+      scale,
+      isSelected,
+      onDeselectClip: handleDeselectClip,
     }),
-    [
-      clip,
-      newName,
-      onCancel,
-      onSave,
-      onChange,
-      scale,
-      name,
-      onEdit,
-      isEditing,
-      trackID,
-    ],
+    [clip, trackID, scale, isSelected, handleDeselectClip],
   );
 
   return (
     <div
+      onMouseDown={(e) => {
+        if (isEditing) return;
+        onMouseDown(e);
+      }}
       onClick={handleSelectedClip}
-      className="clip_block"
+      data-clip-id={clip.id}
+      className={`clip_block ${isDragging ? "is_dragging" : ""}`}
       style={{
         position: "absolute",
-        left: start * scale,
-        width: Math.max(duration * scale, 3),
-        height: 40,
+        left: `${clip.start * scale}px`,
+        width: `${clip.duration * scale}px`,
+        height: 60,
         background: backgroundColor,
-
-        border:
-          selectedClipId === id ? "2px solid #4FC3F7" : "2px solid transparent",
-      }}
-      onMouseDown={(e) => {
-        if (!isSelected || isEditing) return;
-        onMouseDown(e);
+        outline: isSelected ? "2px solid #4FC3F7" : "none",
+        outlineOffset: "-2px",
+        boxSizing: "border-box",
+        margin: 0,
+        padding: "10px",
+        opacity: isDragging ? 0.6 : 1,
+        pointerEvents: "auto",
+        willChange: "transform",
       }}
     >
       {/* левая ручка */}
@@ -113,7 +130,7 @@ function ClipItem({
 
       {/* контент */}
       <div className="block_edit_Clip">
-        <EditBlock {...props} />
+        <EditBlock {...EditBlockProps} />
         <Option_ListClip
           isEdit={isEditing}
           setIsEdit={() => onEdit(id, newName)}
@@ -121,7 +138,7 @@ function ClipItem({
         />
       </div>
 
-      {!isEditing && clip.type === "audio" && <FadeClip {...props} />}
+      {!isEditing && clip.type === "audio" && <FadeClip {...GostClipProps} />}
 
       {/* правая ручка */}
       {!isEditing && (
@@ -136,4 +153,13 @@ function ClipItem({
     </div>
   );
 }
-export default memo(ClipItem);
+
+export default memo(ClipItem, (prevProps, nextProps) => {
+  return (
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.isEditing === nextProps.isEditing &&
+    prevProps.newName === nextProps.newName &&
+    prevProps.trackID === nextProps.trackID &&
+    prevProps.clip === nextProps.clip
+  );
+});

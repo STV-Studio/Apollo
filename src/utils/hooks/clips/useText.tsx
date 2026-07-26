@@ -5,7 +5,7 @@ import type { TextAsset } from "../..";
 
 export function useText() {
   const { addClip, addToTrack, tracks, setClips } = useClips();
-  const { currentTime } = useCurrentTime();
+  const { currentTimeRef } = useCurrentTime();
 
   const handleAddedText = useCallback(() => {
     const targetTrack = tracks[0];
@@ -27,11 +27,11 @@ export function useText() {
     createClipsFromRegistry({
       asset,
       type: "text",
-      start: currentTime,
+      start: currentTimeRef.current,
       targetTrack,
       addToTrack,
     });
-  }, [addClip, addToTrack, currentTime, tracks]);
+  }, [addClip, addToTrack, currentTimeRef, tracks]);
 
   const handleUpdateText = useCallback(
     (idText: string, text: string) => {

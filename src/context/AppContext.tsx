@@ -2,17 +2,25 @@ import {
   createContext,
   useContext,
   type Dispatch,
+  type RefObject,
   type SetStateAction,
 } from "react";
 import { ErrorMessage, type Asset } from "../utils";
+import type { TimeListener } from "./CurrentTimeContext/CurrentTimeProvider";
 
 interface AppContextProps {
   clips: Asset[];
   setClips: Dispatch<SetStateAction<Asset[]>>;
-  currentTime: number;
-  setCurrentTime: Dispatch<SetStateAction<number>>;
+  setCurrentTime: (time: number) => void;
+  currentTimeRef: RefObject<number>;
+  listenersRef: RefObject<Set<TimeListener>>;
+  subscribeTime: (listener: TimeListener) => () => void;
   addClip: (clip: Asset) => void;
   updateClip: (id: string, data: Partial<Asset>) => void;
+
+  scale: number;
+  STEP: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);

@@ -23,7 +23,7 @@ export function DrawShapeProvider({ children }: Props) {
   const [isDrawing, setIsDrawing] = useState(false);
 
   const { addClip, addToTrack, tracks } = useClips();
-  const { currentTime } = useCurrentTime();
+  const { currentTimeRef } = useCurrentTime();
 
   const handleStartDraw = useCallback(
     (e: MouseEvent) => {
@@ -95,7 +95,7 @@ export function DrawShapeProvider({ children }: Props) {
       targetTrack.id,
       createTimelineClip({
         assetId: asset.id,
-        start: currentTime,
+        start: currentTimeRef.current,
         duration: 5,
         type: "shapes",
         x,
@@ -108,7 +108,7 @@ export function DrawShapeProvider({ children }: Props) {
     setIsDrawing(false);
 
     setActiveShape(null);
-  }, [addClip, addToTrack, currentTime, draftShape, tracks]);
+  }, [addClip, addToTrack, currentTimeRef, draftShape, tracks]);
 
   const VALUES = useMemo(
     () => ({

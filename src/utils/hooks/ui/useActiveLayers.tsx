@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useClips, useCurrentTime } from "../../../context";
 import type { ActiveLayers, ClipWithTrack } from "../../types";
 
@@ -45,52 +46,79 @@ import type { ActiveLayers, ClipWithTrack } from "../../types";
 
 export function useActiveLayers() {
   const { tracks } = useClips();
-  const { currentTime } = useCurrentTime();
+  const { currentTimeRef, subscribeTime } = useCurrentTime();
 
-  let topVideo: ClipWithTrack | null = null;
-  const layers: ClipWithTrack[] = [];
+  const [activeLayers, setActiveLayers] = useState<ActiveLayers>([]);
 
-  tracks.forEach((track, trackIndex) => {
-    track.clips.forEach((clip) => {
-      const isActive =
-        currentTime >= clip.start && currentTime <= clip.start + clip.duration;
+  useEffect(() => {
+    const calculateLayers = (time: number) => {
+      let topVideo: ClipWithTrack | null = null;
+      const layers: ClipWithTrack[] = [];
 
-      if (!isActive) return;
+      tracks.forEach((track, trackIndex) => {
+        track.clips.forEach((clip) => {
+          const isActive =
+            time >= clip.start && time <= clip.start + clip.duration;
 
-      // 🎬 VIDEO
-      if (clip.type === "video") {
-        const videoWithTrack: ClipWithTrack = {
-          ...clip,
-          trackIndex,
-          trackId: track.id,
-        };
+          if (!isActive) return;
 
-        if (!topVideo) {
-          topVideo = videoWithTrack;
-        } else if (trackIndex > topVideo.trackIndex) {
-          topVideo = videoWithTrack;
-        }
-        return;
-      }
+          //  VIDEO
+          if (clip.type === "video") {
+            const videoWithTrack: ClipWithTrack = {
+              ...clip,
+              trackIndex,
+              trackId: track.id,
+            };
 
-      // 🎨 LAYERS (не audio / не video)
-      if (clip.type !== "audio") {
-        const layerWithTrack: ClipWithTrack = {
-          ...clip,
-          trackIndex,
-          trackId: track.id,
-        };
+            if (!topVideo) {
+              topVideo = videoWithTrack;
+            } else if (trackIndex > topVideo.trackIndex) {
+              topVideo = videoWithTrack;
+            }
+            return;
+          }
 
-        layers.push(layerWithTrack);
-      }
-    });
-  });
+          //  LAYERS (не audio / не video)
+          if (clip.type !== "audio") {
+            const layerWithTrack: ClipWithTrack = {
+              ...clip,
+              trackIndex,
+              trackId: track.id,
+            };
 
-  const videoTrackIndex = (topVideo as ClipWithTrack | null)?.trackIndex ?? -1;
+            layers.push(layerWithTrack);
+          }
+        });
+      });
 
-  const activeLayers: ActiveLayers = layers.filter(
-    (layer) => layer.trackIndex < videoTrackIndex,
-  );
+      const videoTrackIndex =
+        (topVideo as ClipWithTrack | null)?.trackIndex ?? -1;
+
+      const nextActiveLayers: ActiveLayers = layers.filter(
+        (layer) => layer.trackIndex < videoTrackIndex,
+      );
+
+      //  ОПТИМИЗАЦИЯ: обновляем state ТОЛЬКО если изменились ID слоев
+      setActiveLayers((prev) => {
+        const isSameCount = prev.length === nextActiveLayers.length;
+        const isSameContent =
+          isSameCount &&
+          prev.every(
+            (layer, index) => layer.id === nextActiveLayers[index]?.id,
+          );
+
+        return isSameContent ? prev : nextActiveLayers;
+      });
+    };
+
+    // 1. Считаем сразу при монтировании безопасным путем из ref
+    calculateLayers(currentTimeRef.current);
+
+    // 2. Подписываемся на тики времени без глобального ререндера
+    const unsubscribe = subscribeTime(calculateLayers);
+
+    return unsubscribe;
+  }, [tracks, subscribeTime, currentTimeRef]);
 
   return { activeLayers };
 }
