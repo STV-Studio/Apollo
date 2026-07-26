@@ -81,7 +81,7 @@ function TimeLine() {
           onDragOver={handleDragOver}
           onDragLeave={() => setGostClip([])}
         >
-          <div className="timeline_inner">
+          <div ref={containerRef} className="timeline_inner">
             <div className="timeline_content">
               <TimeRuler
                 containerRef={containerRef}
