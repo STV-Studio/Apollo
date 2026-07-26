@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useClips } from "../../../context";
 import type { TimelineClip } from "../../types";
 
@@ -22,109 +23,145 @@ const clamp = (value: number, min: number, max: number) =>
 export function useResizeClipViewport() {
   const { updateClip } = useClips();
 
-  const startResize = (
-    e: React.MouseEvent,
-    clip: TimelineClip,
-    trackId: string,
-    direction: ResizeDirection,
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const startResize = useCallback(
+    (
+      e: React.MouseEvent,
+      clip: TimelineClip,
+      trackId: string,
+      direction: ResizeDirection,
+    ) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    const startMouseX = e.clientX;
-    const startMouseY = e.clientY;
+      const startMouseX = e.clientX;
+      const startMouseY = e.clientY;
 
-    const startX = clip.x ?? 0;
-    const startY = clip.y ?? 0;
-    const startWidth = clip.width ?? DEFAULT_WIDTH;
-    const startHeight = clip.height ?? DEFAULT_HEIGHT;
+      const startX = clip.x ?? 0;
+      const startY = clip.y ?? 0;
+      const startWidth = clip.width ?? DEFAULT_WIDTH;
+      const startHeight = clip.height ?? DEFAULT_HEIGHT;
+      const startFontSize = clip.fontSize ?? 24;
 
-    const cinema = document.querySelector(".cinima") as HTMLDivElement | null;
-    if (!cinema) return;
+      const cinema = document.querySelector(".cinima") as HTMLDivElement | null;
+      if (!cinema) return;
 
-    const rect = cinema.getBoundingClientRect();
+      const rect = cinema.getBoundingClientRect();
 
-    const handleMove = (moveEvent: MouseEvent) => {
-      const deltaX = moveEvent.clientX - startMouseX;
-      const deltaY = moveEvent.clientY - startMouseY;
+      const targetElement = (e.target as HTMLElement).closest(
+        `[data-id="${clip.id}"]`,
+      ) as HTMLElement | null;
 
-      const isText = clip.type === "text";
-      const isShift = moveEvent.shiftKey;
-      const ratio = startHeight / startWidth;
-
-      let x = startX;
-      let y = startY;
-      let width = startWidth;
-      let height = startHeight;
-
-      const canResizeLeft = direction.includes("left");
-      const canResizeRight = direction.includes("right");
-      const canResizeTop = direction.includes("top");
-      const canResizeBottom = direction.includes("bottom");
-
-      if (canResizeRight) {
-        width = clamp(startWidth + deltaX, MIN_WIDTH, rect.width - startX);
-      }
-
-      if (canResizeLeft) {
-        width = clamp(startWidth - deltaX, MIN_WIDTH, startX + startWidth);
-        x = startX + (startWidth - width);
-      }
-
-      if (canResizeBottom) {
-        height = clamp(startHeight + deltaY, MIN_HEIGHT, rect.height - startY);
-      }
-
-      if (canResizeTop) {
-        height = clamp(startHeight - deltaY, MIN_HEIGHT, startY + startHeight);
-        y = startY + (startHeight - height);
-      }
-
-      if (isShift) {
-        const isHorizontal = canResizeLeft || canResizeRight;
-
-        if (isHorizontal) {
-          height = width * ratio;
-
-          if (canResizeTop) {
-            y = startY + (startHeight - height);
-          }
-        } else {
-          width = height / ratio;
-
-          if (canResizeLeft) {
-            x = startX + (startWidth - width);
-          }
-        }
-
-        width = clamp(width, MIN_WIDTH, rect.width - x);
-        height = clamp(height, MIN_HEIGHT, rect.height - y);
-      }
-
-      const payload: Partial<TimelineClip> = {
-        x,
-        y,
-        width,
-        height,
+      let finalPayload: Partial<TimelineClip> = {
+        x: startX,
+        y: startY,
+        width: startWidth,
+        height: startHeight,
       };
 
-      const scale = height / startHeight;
+      const handleMove = (moveEvent: MouseEvent) => {
+        const deltaX = moveEvent.clientX - startMouseX;
+        const deltaY = moveEvent.clientY - startMouseY;
 
-      if (isText && isShift) {
-        payload.fontSize = Math.max(8, (clip.fontSize ?? 24) * scale);
-      }
+        const isText = clip.type === "text";
+        const isShift = moveEvent.shiftKey;
+        const ratio = startHeight / startWidth;
 
-      updateClip(trackId, clip.id, payload);
-    };
+        let x = startX;
+        let y = startY;
+        let width = startWidth;
+        let height = startHeight;
 
-    const handleUp = () => {
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseup", handleUp);
-    };
+        const canResizeLeft = direction.includes("left");
+        const canResizeRight = direction.includes("right");
+        const canResizeTop = direction.includes("top");
+        const canResizeBottom = direction.includes("bottom");
 
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseup", handleUp);
-  };
+        if (canResizeRight) {
+          width = clamp(startWidth + deltaX, MIN_WIDTH, rect.width - startX);
+        }
+
+        if (canResizeLeft) {
+          width = clamp(startWidth - deltaX, MIN_WIDTH, startX + startWidth);
+          x = startX + (startWidth - width);
+        }
+
+        if (canResizeBottom) {
+          height = clamp(
+            startHeight + deltaY,
+            MIN_HEIGHT,
+            rect.height - startY,
+          );
+        }
+
+        if (canResizeTop) {
+          height = clamp(
+            startHeight - deltaY,
+            MIN_HEIGHT,
+            startY + startHeight,
+          );
+          y = startY + (startHeight - height);
+        }
+
+        if (isShift) {
+          const isHorizontal = canResizeLeft || canResizeRight;
+
+          if (isHorizontal) {
+            height = width * ratio;
+
+            if (canResizeTop) {
+              y = startY + (startHeight - height);
+            }
+          } else {
+            width = height / ratio;
+
+            if (canResizeLeft) {
+              x = startX + (startWidth - width);
+            }
+          }
+
+          width = clamp(width, MIN_WIDTH, rect.width - x);
+          height = clamp(height, MIN_HEIGHT, rect.height - y);
+        }
+
+        const scale = height / startHeight;
+        let newFontSize = startFontSize;
+
+        if (isText && isShift) {
+          newFontSize = Math.max(8, startFontSize * scale);
+        }
+
+        finalPayload = {
+          x,
+          y,
+          width,
+          height,
+          ...(isText && isShift ? { fontSize: newFontSize } : {}),
+        };
+
+        if (targetElement) {
+          targetElement.style.left = `${x}px`;
+          targetElement.style.top = `${y}px`;
+          targetElement.style.width = `${width}px`;
+          targetElement.style.height = `${height}px`;
+
+          if (isText && isShift) {
+            targetElement.style.fontSize = `${newFontSize}px`;
+          }
+        }
+      };
+
+      const handleUp = () => {
+        window.removeEventListener("mousemove", handleMove);
+        window.removeEventListener("mouseup", handleUp);
+
+        updateClip(trackId, clip.id, finalPayload);
+      };
+
+      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("mouseup", handleUp);
+    },
+    [updateClip],
+  );
 
   return { startResize };
 }

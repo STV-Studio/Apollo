@@ -9,6 +9,7 @@ interface Props {
   duration: number;
   assetId: string;
   sourceOffset: number;
+  scale?: number;
 }
 
 export function useResizeClip({
@@ -18,6 +19,7 @@ export function useResizeClip({
   duration,
   assetId,
   sourceOffset,
+  scale = 50,
 }: Props) {
   const { updateClip, clips } = useClips();
   const { selectedClipId } = useSelected();
@@ -30,79 +32,84 @@ export function useResizeClip({
     pauseAllMedia(VIDEO_REF.current);
     setIsPlay(false);
 
-    // 💣 безопасный asset
     const asset = clips.find((el) => el.id === assetId);
     if (!asset || !("duration" in asset)) return;
 
-    const startX = e.clientX;
+    const startMouseX = e.clientX;
 
-    let prevX = startX;
-    let currentStart = start;
-    let currentDuration = duration;
-    let currentOffset = sourceOffset;
+    // Начальные параметры клипа перед стартом ресайза
+    const initialStart = start;
+    const initialDuration = duration;
+    const initialOffset = sourceOffset;
+
+    let finalStart = initialStart;
+    let finalDuration = initialDuration;
+    let finalOffset = initialOffset;
 
     const MIN_DURATION = 0.05;
 
+    // 💡 Ищем DOM-элемент клипа по data-clip-id
+    const clipElement = document.querySelector(
+      `[data-clip-id="${id}"]`,
+    ) as HTMLElement | null;
+
     const handleMove = (moveEvent: MouseEvent) => {
-      const deltaPx = moveEvent.clientX - prevX;
-      prevX = moveEvent.clientX;
+      const deltaPx = moveEvent.clientX - startMouseX;
+      const deltaSec = deltaPx / scale;
 
-      const SPEED = 0.01;
-      const delta = deltaPx * SPEED;
-
-      // 👉 RIGHT (растягиваем вправо)
       if (side === "right") {
-        const maxDuration = asset.duration - currentOffset;
+        const maxDuration = asset.duration - initialOffset;
+        let newDuration = initialDuration + deltaSec;
 
-        let newDuration = currentDuration + delta;
+        newDuration = Math.max(
+          MIN_DURATION,
+          Math.min(newDuration, maxDuration),
+        );
 
-        newDuration = Math.max(MIN_DURATION, newDuration);
-        newDuration = Math.min(newDuration, maxDuration);
+        finalDuration = newDuration;
 
-        currentDuration = newDuration;
-
-        updateClip(trackID, id, {
-          duration: newDuration,
-        });
+        if (clipElement) {
+          clipElement.style.width = `${newDuration * scale}px`;
+        }
       }
 
-      // 👉 LEFT (тянем влево)
       if (side === "left") {
-        let newStart = currentStart + delta;
-        let newDuration = currentDuration - delta;
-        let newOffset = currentOffset + delta;
+        let newStart = initialStart + deltaSec;
+        let newDuration = initialDuration - deltaSec;
+        let newOffset = initialOffset + deltaSec;
 
-        // ❗ нельзя уйти в минус
         if (newOffset < 0) {
           newOffset = 0;
-          newStart = currentStart + currentOffset;
+          newStart = initialStart - initialOffset; // Исправлен знак!
+          newDuration = initialDuration + initialOffset;
         }
 
-        // ❗ нельзя выйти за конец
-        if (newOffset + newDuration > asset.duration) {
-          newDuration = asset.duration - newOffset;
-        }
-
-        // ❗ минимальная длина
         if (newDuration < MIN_DURATION) {
           newDuration = MIN_DURATION;
+          newStart = initialStart + (initialDuration - MIN_DURATION);
+          newOffset = initialOffset + (initialDuration - MIN_DURATION);
         }
 
-        currentStart = newStart;
-        currentDuration = newDuration;
-        currentOffset = newOffset;
+        finalStart = newStart;
+        finalDuration = newDuration;
+        finalOffset = newOffset;
 
-        updateClip(trackID, id, {
-          start: newStart,
-          duration: newDuration,
-          sourceOffset: newOffset,
-        });
+        if (clipElement) {
+          clipElement.style.left = `${newStart * scale}px`;
+          clipElement.style.width = `${newDuration * scale}px`;
+        }
       }
     };
 
     const handleUp = () => {
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("mouseup", handleUp);
+
+      updateClip(trackID, id, {
+        start: finalStart,
+        duration: finalDuration,
+        sourceOffset: finalOffset,
+      });
     };
 
     window.addEventListener("mousemove", handleMove);

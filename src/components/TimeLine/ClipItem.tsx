@@ -34,7 +34,7 @@ function ClipItem({
   isEditing,
   onEdit,
 }: Props) {
-  const { start, duration, type, id } = clip;
+  const { start, type, id } = clip;
   const { onMouseDown } = useDragClip({ start, id, trackID });
   const { setSelectedClipId } = useSelected();
   const { onResizeStart } = useResizeClip({
@@ -44,6 +44,7 @@ function ClipItem({
     duration: clip.duration,
     assetId: clip.assetId,
     sourceOffset: clip.sourceOffset ?? 0,
+    scale,
   });
 
   const backgroundColor = getClipColor(type === "default" ? "effect" : type);
@@ -89,19 +90,15 @@ function ClipItem({
   return (
     <div
       onClick={handleSelectedClip}
+      data-clip-id={clip.id}
       className="clip_block"
       style={{
         position: "absolute",
-        left: start * scale,
-        width: Math.max(duration * scale, 3),
+        left: `${clip.start * scale}px`,
+        width: `${clip.duration * scale}px`,
         height: 40,
         background: backgroundColor,
-
         border: isSelected ? "2px solid #4FC3F7" : "2px solid transparent",
-      }}
-      onMouseDown={(e) => {
-        if (!isSelected || isEditing) return;
-        onMouseDown(e);
       }}
     >
       {/* левая ручка */}
@@ -116,7 +113,13 @@ function ClipItem({
       )}
 
       {/* контент */}
-      <div className="block_edit_Clip">
+      <div
+        onMouseDown={(e) => {
+          if (!isSelected || isEditing) return;
+          onMouseDown(e);
+        }}
+        className="block_edit_Clip"
+      >
         <EditBlock {...props} />
         <Option_ListClip
           isEdit={isEditing}
