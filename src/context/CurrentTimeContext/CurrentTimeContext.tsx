@@ -1,16 +1,12 @@
-import {
-  createContext,
-  useContext,
-  type Dispatch,
-  type RefObject,
-  type SetStateAction,
-} from "react";
+import { createContext, useContext, type RefObject } from "react";
 import { ErrorMessage } from "../../utils";
+import type { TimeListener } from "./CurrentTimeProvider";
 
 interface CurrentTimeContextProps {
-  currentTime: number;
-  setCurrentTime: Dispatch<SetStateAction<number>>;
+  setCurrentTime: (time: number) => void;
   currentTimeRef: RefObject<number>;
+  listenersRef: RefObject<Set<TimeListener>>;
+  subscribeTime: (listener: TimeListener) => () => void;
 }
 
 export const CurrentTimeContext = createContext<

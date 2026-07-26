@@ -1,3 +1,4 @@
+
 import type { Asset } from "../types";
 import { getClipType } from "./getClipType";
 
@@ -38,5 +39,8 @@ export function createAsset(file: File, url: string, duration: number): Asset {
         type: "text",
         text: file.name,
       };
+
+    default:
+      throw new Error(`Unsupported asset type: ${type}`);
   }
 }
