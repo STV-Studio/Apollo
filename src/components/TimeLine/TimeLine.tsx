@@ -5,14 +5,9 @@ import Tracks from "./Tracks";
 import { useClips, usePreview } from "../../context";
 import Options from "./Options/Options";
 import TrackSidebar from "./TrackSidebar";
-import {
-  useDataEdit,
-  useZoomEffect,
-  useClipEdit,
-  useTimeLineDrop,
-  onKey,
-} from "../../utils";
+import { useDataEdit, useClipEdit, useTimeLineDrop, onKey } from "../../utils";
 import { useSelected } from "../../context/SelectionContext";
+import { useZoomEffect } from "../../context/ZoomContext/ZoomContext";
 
 function TimeLine() {
   const { addTrack, tracks, setTracks } = useClips();
@@ -32,12 +27,10 @@ function TimeLine() {
     initialValue: "",
   });
 
-  // функция обработки дропа клипа на таймлайн
   const { handleDrop, gostClip, handleDragOver, setGostClip } = useTimeLineDrop(
     { scale },
   );
 
-  // функция обработки нажатия клавиш для управления воспроизведением видео с помощью пробела
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const press = onKey(e);
 
@@ -70,20 +63,25 @@ function TimeLine() {
       <Options />
 
       <div className="timeline_layout" onKeyDown={handleKeyDown} tabIndex={0}>
-        {/*  SIDEBAR */}
-        <button className="btn__add_tracks" onClick={addTrack}>
-          + add Tracks
-        </button>
-        <div className="timeline_sidebar">{track_sidebar}</div>
+        {/* SIDEBAR */}
+        <div className="timeline_sidebar">
+          <button className="btn__add_tracks" onClick={addTrack}>
+            + add Tracks
+          </button>
+          {track_sidebar}
+        </div>
 
-        {/*  TIMELINE */}
+        {/* TIMELINE */}
         <div
           className="timeline"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={() => setGostClip([])}
         >
-          <div ref={containerRef} className="timeline_inner">
+          <div
+            ref={containerRef}
+            className="timeline_inner timeline_scroll_viewport"
+          >
             <div className="timeline_content">
               <TimeRuler
                 containerRef={containerRef}

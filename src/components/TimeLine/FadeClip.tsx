@@ -29,6 +29,9 @@ const MIN_FADE_PX = 6;
 const OVERSCAN_BUFFER_PX = 20;
 const SELECTED_POINT_RADIUS = 6;
 
+// 💡 Настраиваемый отступ по бокам в пикселях
+const PADDING_X = 20;
+
 function FadeClip(props: Props) {
   const { clip, trackID, scale, isSelected, onDeselectClip } = props;
   const { duration, start } = clip;
@@ -55,14 +58,15 @@ function FadeClip(props: Props) {
   const fadeIn = clip.fadeIn ?? 0;
   const fadeOut = clip.fadeOut ?? 0;
 
-  const fadeInPx = Math.max(fadeIn * scale, MIN_FADE_PX);
-  const fadeOutPx = Math.max(fadeOut * scale, MIN_FADE_PX);
+  const fadeInPx = fadeIn > 0 ? Math.max(fadeIn * scale, MIN_FADE_PX) : 0;
+  const fadeOutPx = fadeOut > 0 ? Math.max(fadeOut * scale, MIN_FADE_PX) : 0;
 
   const customVolumePoints = getCustomVolumePoints({ clip, scale });
 
   const allPoints = getAllVolumePoints({
     clip,
     scale,
+    paddingX: PADDING_X,
   });
 
   const { cleanPath } = useTimeFormat();
@@ -71,10 +75,17 @@ function FadeClip(props: Props) {
 
   const width = duration * scale;
 
+  // 💡 Применяем боковой отступ для идеального отступа ручек от стенок клипа
+  const minFadeInCx = Math.max(fadeInPx, PADDING_X + POINT_RADIUS);
+  const maxFadeOutCx = Math.min(
+    width - fadeOutPx,
+    width - PADDING_X - POINT_RADIUS,
+  );
+
   const areaPath = cleanPath(`
   ${smoothPath}
-  L ${width} 20
-  L 0 20
+  L ${width} ${SVG_HEIGHT}
+  L 0 ${SVG_HEIGHT}
   Z
 `);
 
@@ -129,7 +140,7 @@ function FadeClip(props: Props) {
 
     const handleId = type === "left" ? "fade-in" : "fade-out";
     setSelectedPointId(handleId);
-    onDeselectClip?.(); // Снимаем выбор с клипа
+    onDeselectClip?.();
     handleFadeDrag(e, type);
   };
 
@@ -149,11 +160,17 @@ function FadeClip(props: Props) {
   const points = visiblePoints.map(({ x, y, id }) => {
     const isPointSelected = selectedPointId === id;
 
+    // 💡 Ограничение кастомных желтых точек отступами PADDING_X
+    const clampedX = Math.max(
+      PADDING_X + POINT_RADIUS,
+      Math.min(x, width - PADDING_X - POINT_RADIUS),
+    );
+
     return (
       <circle
         key={id}
         className="volume-point"
-        cx={x}
+        cx={clampedX}
         cy={y}
         r={isPointSelected ? SELECTED_POINT_RADIUS : POINT_RADIUS}
         fill={isPointSelected ? "#00fff0" : "yellow"}
@@ -185,11 +202,16 @@ function FadeClip(props: Props) {
   const isFadeOutSelected = selectedPointId === "fade-out";
 
   return (
-    <div ref={containerRef} className="fade_block">
+    <div
+      ref={containerRef}
+      className="fade_block"
+      style={{ overflow: "hidden", width: "100%", height: SVG_HEIGHT }}
+    >
       <svg
         className="volume-line"
         width={width}
         height={SVG_HEIGHT}
+        style={{ overflow: "visible" }}
         onMouseDown={(e) => {
           if (!isSelected) {
             e.stopPropagation();
@@ -211,7 +233,7 @@ function FadeClip(props: Props) {
               pointerEvents: "auto",
               cursor: !isFadeInSelected ? "pointer" : "ew-resize",
             }}
-            cx={fadeInPx}
+            cx={minFadeInCx}
             cy={FADE_HANDLE_TOP}
             r={isFadeInSelected ? SELECTED_POINT_RADIUS : POINT_RADIUS}
             fill={isFadeInSelected ? "#00fff0" : "white"}
@@ -219,9 +241,6 @@ function FadeClip(props: Props) {
             strokeWidth={isFadeInSelected ? 2 : 0}
             onMouseDown={(e) => handleSelectFadeHandle(e, "left")}
             onClick={(e) => e.stopPropagation()}
-            onDoubleClick={(e) => {
-              if (!isFadeInSelected) e.stopPropagation();
-            }}
           />
         )}
 
@@ -233,7 +252,7 @@ function FadeClip(props: Props) {
               pointerEvents: "auto",
               cursor: !isFadeOutSelected ? "pointer" : "ew-resize",
             }}
-            cx={width - fadeOutPx}
+            cx={maxFadeOutCx}
             cy={FADE_HANDLE_TOP}
             r={isFadeOutSelected ? SELECTED_POINT_RADIUS : POINT_RADIUS}
             fill={isFadeOutSelected ? "#00fff0" : "white"}
@@ -241,13 +260,11 @@ function FadeClip(props: Props) {
             strokeWidth={isFadeOutSelected ? 2 : 0}
             onMouseDown={(e) => handleSelectFadeHandle(e, "right")}
             onClick={(e) => e.stopPropagation()}
-            onDoubleClick={(e) => {
-              if (!isFadeOutSelected) e.stopPropagation();
-            }}
           />
         )}
       </svg>
     </div>
   );
 }
+
 export default memo(FadeClip);

@@ -29,6 +29,10 @@ function TrackRow({ track, scale, gostClip }: Props) {
     initialValue: "",
   });
 
+  const activeGhosts = useMemo(() => {
+    return gostClip.filter((ghost) => ghost.trackId === track.id);
+  }, [gostClip, track.id]);
+
   //* отображение клипов на треке в зависимости от их позиции и длительности, а также масштаба таймлайна для правильного отображения ширины клипа на таймлайне */
   const TRACKS = useMemo(() => {
     return track.clips.map((clip) => {
@@ -66,18 +70,22 @@ function TrackRow({ track, scale, gostClip }: Props) {
 
   return (
     <div className="track_row_wrapper">
-      <div className="track_row">
+      <div
+        className="track_row"
+        style={{
+          width: "100%",
+          position: "relative",
+        }}
+      >
         {TRACKS}
 
-        {gostClip
-          .filter((ghost) => ghost.trackId === track.id)
-          .map((ghost) => (
-            <GhostClip
-              key={`${ghost.trackId}-${ghost.type}`}
-              ghostClip={[ghost]}
-              scale={scale}
-            />
-          ))}
+        {activeGhosts.map((ghost) => (
+          <GhostClip
+            key={`${ghost.trackId}-${ghost.type}`}
+            ghostClip={[ghost]}
+            scale={scale}
+          />
+        ))}
       </div>
     </div>
   );

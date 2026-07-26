@@ -1,42 +1,45 @@
 import type { TimelineClip } from "../types";
+import { getCustomVolumePoints } from "./getCustomVolumePoints";
 
-interface Props {
-  clip: TimelineClip;
-  scale: number;
-}
-
+// getAllVolumePoints.ts
 export function getAllVolumePoints({
   clip,
   scale,
-}: Props) {
-  const H = 20;
-
+  paddingX = 6, 
+}: {
+  clip: TimelineClip;
+  scale: number;
+  paddingX?: number;
+}) {
   const width = clip.duration * scale;
+  const fadeIn = clip.fadeIn ?? 0;
+  const fadeOut = clip.fadeOut ?? 0;
 
-  const fadeIn =
-    (clip.fadeIn ?? 0) * scale;
+  const points = [];
 
-  const fadeOut =
-    (clip.fadeOut ?? 0) * scale;
 
-  return [
-    { x: 0, y: H },
+  if (fadeIn > 0) {
+    points.push({ x: 0, y: 20 });
+    // Затем идет к позиции ручки
+    const fadeInX = Math.max(fadeIn * scale, paddingX + 5);
+    points.push({ x: fadeInX, y: 5 });
+  } else {
+    points.push({ x: paddingX + 5, y: 5 });
+  }
 
-    { x: fadeIn, y: 2 },
+  // 2. КАСТОМНЫЕ ТОЧКИ ГРОМКОСТИ
+  const customPoints = getCustomVolumePoints({ clip, scale });
+  points.push(...customPoints);
 
-    ...(clip.volumePoints ?? []).map(
-      (point) => ({
-        x: point.time * scale,
+  // 3. КОНЕЦ ЛИНИИ (Fade Out)
+  if (fadeOut > 0) {
+    const fadeOutX = Math.min(width - fadeOut * scale, width - paddingX - 5);
+    points.push({ x: fadeOutX, y: 5 });
+    // Линия уходит в самый нижний угол
+    points.push({ x: width, y: 20 });
+  } else {
+    points.push({ x: width - paddingX - 5, y: 5 });
+  }
 
-        y: H - point.value * H,
-      }),
-    ),
-
-    {
-      x: width - fadeOut,
-      y: 2,
-    },
-
-    { x: width, y: H },
-  ].sort((a, b) => a.x - b.x);
+  return points;
 }

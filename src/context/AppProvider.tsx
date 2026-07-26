@@ -4,6 +4,7 @@ import { CurrentTimeProvider } from "./CurrentTimeContext/CurrentTimeProvider";
 import { PreviewProvider } from "./PreviewContext/PreviewProvider";
 import { DrawShapeProvider } from "./DrawShapeContext/DrawShapeProvider";
 import SelectionProvider from "./SelectionContext/SelectionProvider";
+import { ZoomProvider } from "./ZoomContext/ZoomContext";
 
 type Props = {
   children: ReactNode;
@@ -15,7 +16,9 @@ export function AppProvider({ children }: Props) {
       <CurrentTimeProvider>
         <PreviewProvider>
           <DrawShapeProvider>
-            <SelectionProvider>{children}</SelectionProvider>
+            <SelectionProvider>
+              <ZoomProvider>{children}</ZoomProvider>
+            </SelectionProvider>
           </DrawShapeProvider>
         </PreviewProvider>
       </CurrentTimeProvider>

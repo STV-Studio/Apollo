@@ -35,7 +35,12 @@ function ClipItem({
   onEdit,
 }: Props) {
   const { start, type, id } = clip;
-  const { onMouseDown } = useDragClip({ start, id, trackID });
+  const { onMouseDown, isDragging } = useDragClip({
+    start,
+    id,
+    trackID,
+    scale,
+  });
   const { setSelectedClipId } = useSelected();
   const { onResizeStart } = useResizeClip({
     id: clip.id,
@@ -89,16 +94,28 @@ function ClipItem({
 
   return (
     <div
+      onMouseDown={(e) => {
+        if (isEditing) return;
+        onMouseDown(e);
+      }}
       onClick={handleSelectedClip}
       data-clip-id={clip.id}
-      className="clip_block"
+      className={`clip_block ${isDragging ? "is_dragging" : ""}`}
       style={{
         position: "absolute",
         left: `${clip.start * scale}px`,
         width: `${clip.duration * scale}px`,
-        height: 40,
+        height: 60,
         background: backgroundColor,
-        border: isSelected ? "2px solid #4FC3F7" : "2px solid transparent",
+        // 💡 Используем outline вместо border, чтобы рамка НЕ МЕНЯЛА геометрические размеры блока!
+        outline: isSelected ? "2px solid #4FC3F7" : "none",
+        outlineOffset: "-2px",
+        boxSizing: "border-box", // 💡 Жестко фиксируем расчет геометрии
+        margin: 0,
+        padding: "10px", // Фиксированный внутренний отступ
+        opacity: isDragging ? 0.6 : 1,
+        pointerEvents: "auto",
+        willChange: "transform",
       }}
     >
       {/* левая ручка */}
@@ -113,13 +130,7 @@ function ClipItem({
       )}
 
       {/* контент */}
-      <div
-        onMouseDown={(e) => {
-          if (!isSelected || isEditing) return;
-          onMouseDown(e);
-        }}
-        className="block_edit_Clip"
-      >
+      <div className="block_edit_Clip">
         <EditBlock {...props} />
         <Option_ListClip
           isEdit={isEditing}
@@ -143,4 +154,5 @@ function ClipItem({
     </div>
   );
 }
+
 export default memo(ClipItem);

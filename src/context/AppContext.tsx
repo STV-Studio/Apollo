@@ -17,6 +17,10 @@ interface AppContextProps {
   subscribeTime: (listener: TimeListener) => () => void;
   addClip: (clip: Asset) => void;
   updateClip: (id: string, data: Partial<Asset>) => void;
+
+  scale: number;
+  STEP: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
