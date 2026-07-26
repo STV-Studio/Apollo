@@ -14,6 +14,7 @@ interface Props {
   name: string | undefined;
   isEditing: boolean;
   newName: string;
+  isSelected: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onEdit: (id: string, value: string) => void;
   onSave: (id: string) => void;
@@ -26,6 +27,7 @@ function ClipItem({
   scale,
   newName,
   name,
+  isSelected,
   onSave,
   onCancel,
   onChange,
@@ -34,7 +36,7 @@ function ClipItem({
 }: Props) {
   const { start, duration, type, id } = clip;
   const { onMouseDown } = useDragClip({ start, id, trackID });
-  const { setSelectedClipId, selectedClipId } = useClips();
+  const { setSelectedClipId } = useClips();
   const { onResizeStart } = useResizeClip({
     id: clip.id,
     trackID,
@@ -52,10 +54,11 @@ function ClipItem({
     e.stopPropagation();
     setSelectedClipId(id);
   };
-  const isSelected = selectedClipId === id;
 
   const props = useMemo(
     () => ({
+      isSelected,
+      onDeselectClip: () => setSelectedClipId(null),
       clip,
       newName,
       onCancel,
@@ -68,6 +71,8 @@ function ClipItem({
       trackID,
     }),
     [
+      isSelected,
+      setSelectedClipId,
       clip,
       newName,
       onCancel,
@@ -92,8 +97,7 @@ function ClipItem({
         height: 40,
         background: backgroundColor,
 
-        border:
-          selectedClipId === id ? "2px solid #4FC3F7" : "2px solid transparent",
+        border: isSelected ? "2px solid #4FC3F7" : "2px solid transparent",
       }}
       onMouseDown={(e) => {
         if (!isSelected || isEditing) return;

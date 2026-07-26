@@ -11,7 +11,7 @@ interface Props {
   gostClip: GostClip[];
 }
 function TrackRow({ track, scale, gostClip }: Props) {
-  const { clips } = useClips();
+  const { clips, selectedClipId } = useClips();
 
   const { handleClipEdit } = useDataEdit();
   const {
@@ -34,12 +34,15 @@ function TrackRow({ track, scale, gostClip }: Props) {
     return track.clips.map((clip) => {
       const ASSETS = clips.find((a) => a.id === clip.assetId);
       if (!ASSETS) return null;
+
+      const isSelected = selectedClipId === clip.id;
       return (
         <ClipItem
           key={clip.id}
           clip={{
             ...clip,
           }}
+          isSelected={isSelected}
           name={ASSETS.name}
           scale={scale}
           trackID={track.id}
@@ -55,6 +58,7 @@ function TrackRow({ track, scale, gostClip }: Props) {
   }, [
     track.clips,
     clips,
+    selectedClipId,
     scale,
     isEditID,
     newName,
