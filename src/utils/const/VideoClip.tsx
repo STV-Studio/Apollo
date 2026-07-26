@@ -1,13 +1,14 @@
 import { memo, useEffect, useRef } from "react";
+import { useCurrentTime } from "../../context";
 
 interface Props {
   src: string | undefined;
-  currentTime: number;
   start: number;
 }
 
-function VideoClip({ src, currentTime, start }: Props) {
+function VideoClip({ src, start }: Props) {
   const ref = useRef<HTMLVideoElement | null>(null);
+  const { currentTime } = useCurrentTime();
 
   useEffect(() => {
     if (!ref.current) return;

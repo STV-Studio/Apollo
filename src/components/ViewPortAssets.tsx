@@ -1,5 +1,5 @@
 import { Fragment, lazy, memo, Suspense, useMemo, useState } from "react";
-import { useClips, useCurrentTime } from "../context";
+import { useClips } from "../context";
 import {
   useDataEdit,
   useDebounceSearch,
@@ -15,7 +15,6 @@ const OptionFilter = lazy(() => import("./OptionFilter"));
 
 function ViewPortAssets() {
   const { clips } = useClips();
-  const { currentTime } = useCurrentTime();
 
   const { handleEdit } = useDataEdit();
   const {
@@ -81,7 +80,6 @@ function ViewPortAssets() {
       >
         <AssetItem
           clip={clip}
-          currentTime={currentTime}
           isEditing={isEditID === clip.id}
           newName={newName}
           onChange={handleChange}
