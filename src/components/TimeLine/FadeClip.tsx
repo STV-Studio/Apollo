@@ -1,8 +1,10 @@
-import { memo } from "react";
+import { memo, useMemo, useRef } from "react";
 import {
   createCustomeVolumePoints,
   getCustomVolumePoints,
   useFadeDrag,
+  useScrollParent,
+  useTimeFormat,
   type TimelineClip,
 } from "../../utils";
 
@@ -17,7 +19,7 @@ interface Props {
 }
 
 function FadeClip({ clip, trackID, scale }: Props) {
-  const { duration } = clip;
+  const { duration, start } = clip;
   const { handleFadeDrag, handlePointDrag } = useFadeDrag({
     trackID,
     clip,
@@ -25,6 +27,9 @@ function FadeClip({ clip, trackID, scale }: Props) {
   });
 
   const { updateClip } = useClips();
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const viewport = useScrollParent(containerRef, scale);
 
   const fadeIn = clip.fadeIn ?? 0;
   const fadeOut = clip.fadeOut ?? 0;
@@ -41,10 +46,19 @@ function FadeClip({ clip, trackID, scale }: Props) {
     scale,
   });
 
-  const smoothPath = getSmoothVolumePath(allPoints);
+  const { cleanPath } = useTimeFormat();
+  const rawSmoothPath = getSmoothVolumePath(allPoints);
+  const smoothPath = cleanPath(rawSmoothPath);
 
   const width = duration * scale;
   const top = 5;
+
+  const areaPath = cleanPath(`
+  ${smoothPath}
+  L ${width} 20
+  L 0 20
+  Z
+`);
 
   const handleAddedNewVolumePoint = (e: React.MouseEvent<SVGSVGElement>) => {
     e.stopPropagation();
@@ -63,7 +77,27 @@ function FadeClip({ clip, trackID, scale }: Props) {
     });
   };
 
-  const points = customVolumePoints.map(({ x, y, id }) => (
+  const visiblePoints = useMemo(() => {
+    const OVERSCAN_SECONDS = 2;
+
+    const viewStartTime = Math.max(
+      0,
+      viewport.scrollLeft / scale - OVERSCAN_SECONDS,
+    );
+    const viewEndTime =
+      (viewport.scrollLeft + viewport.clientWidth) / scale + OVERSCAN_SECONDS;
+
+    return customVolumePoints.filter(({ x }) => {
+      const pointsLocalTime = x / scale;
+      const pointsGlobalTime = start + pointsLocalTime;
+
+      return (
+        pointsGlobalTime >= viewStartTime && pointsGlobalTime <= viewEndTime
+      );
+    });
+  }, [customVolumePoints, scale, start, viewport]);
+
+  const points = visiblePoints.map(({ x, y, id }) => (
     <circle
       key={id}
       cx={x}
@@ -76,45 +110,42 @@ function FadeClip({ clip, trackID, scale }: Props) {
   ));
 
   return (
-    <div className="fade_block">
+    <div ref={containerRef} className="fade_block">
       <svg
         className="volume-line"
         width={duration * scale}
         height={20}
         onDoubleClick={handleAddedNewVolumePoint}
       >
-        <path
-          d={`
-            ${smoothPath}
-              L ${width} 20
-              L 0 20
-              Z
-            `}
-          fill="rgba(255,255,255,0.12)"
-        />
+        <path d={areaPath} fill="rgba(255,255,255,0.12)" />
         <path d={smoothPath} stroke="white" strokeWidth="2" fill="none" />
 
         {points}
 
         {/* fade in handle */}
-        <circle
-          style={{ pointerEvents: "auto", cursor: "ew-resize" }}
-          cx={fadeInPx}
-          cy={top}
-          r={5}
-          fill="white"
-          onMouseDown={(e) => handleFadeDrag(e, "left")}
-        />
+        {start * scale + fadeInPx >= viewport.scrollLeft - 20 && (
+          <circle
+            style={{ pointerEvents: "auto", cursor: "ew-resize" }}
+            cx={fadeInPx}
+            cy={top}
+            r={5}
+            fill="white"
+            onMouseDown={(e) => handleFadeDrag(e, "left")}
+          />
+        )}
 
         {/* fade out handle */}
-        <circle
-          style={{ pointerEvents: "auto", cursor: "ew-resize" }}
-          cx={width - fadeOutPx}
-          cy={top}
-          r={5}
-          fill="white"
-          onMouseDown={(e) => handleFadeDrag(e, "right")}
-        />
+        {(start + duration) * scale - fadeOutPx <=
+          viewport.scrollLeft + viewport.clientWidth + 20 && (
+          <circle
+            style={{ pointerEvents: "auto", cursor: "ew-resize" }}
+            cx={width - fadeOutPx}
+            cy={top}
+            r={5}
+            fill="white"
+            onMouseDown={(e) => handleFadeDrag(e, "right")}
+          />
+        )}
       </svg>
     </div>
   );

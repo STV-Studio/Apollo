@@ -25,5 +25,20 @@ export function useTimeFormat() {
     return `${m}:${s < 10 ? "0" : ""}${s}`;
   }, []);
 
-  return { getAdaptiveStep, formatTime, NICE_STEPS };
+  const cleanPath = useCallback((pathD: string): string => {
+    return (
+      pathD
+        // 1. Округляем все плавающие числа до 2 знаков после запятой (убирает .9999999)
+        .replace(/-?\d+\.\d+/g, (match) => {
+          const num = parseFloat(match);
+          // Если число целое или близко к нему, убираем .0
+          return Number(num.toFixed(2)).toString();
+        })
+        // 2. Убираем переносы строк и лишние пробелы
+        .replace(/\s+/g, " ")
+        .trim()
+    );
+  }, []);
+
+  return { getAdaptiveStep, formatTime, NICE_STEPS, cleanPath };
 }
