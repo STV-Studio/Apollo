@@ -1,12 +1,10 @@
 import { memo, useEffect, useRef } from "react";
 import { useCurrentTime } from "../../context";
+import { useZoomEffect } from "../../context/ZoomContext/ZoomContext";
 
-interface Props {
-  scale: number;
-}
-
-function Playhead({ scale }: Props) {
+function Playhead() {
   const { subscribeTime } = useCurrentTime();
+  const { scale } = useZoomEffect();
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

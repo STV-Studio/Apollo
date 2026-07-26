@@ -267,4 +267,13 @@ function FadeClip(props: Props) {
   );
 }
 
-export default memo(FadeClip);
+export default memo(FadeClip, (prevProps, nextProps) => {
+  return (
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.scale === nextProps.scale &&
+    prevProps.trackID === nextProps.trackID &&
+    prevProps.clip.fadeIn === nextProps.clip.fadeIn &&
+    prevProps.clip.fadeOut === nextProps.clip.fadeOut &&
+    prevProps.clip.volumePoints === nextProps.clip.volumePoints
+  );
+});

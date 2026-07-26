@@ -6,8 +6,6 @@ import { useSelected } from "../../context/SelectionContext";
 interface Props {
   clip: TimelineClip;
   trackID: string;
-  scale: number;
-  name: string | undefined;
   isEditing: boolean;
   newName: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -19,8 +17,6 @@ function TrackClipItem(props: Props) {
   const {
     clip,
     trackID,
-    scale,
-    name,
     isEditing,
     newName,
     onChange,
@@ -33,11 +29,9 @@ function TrackClipItem(props: Props) {
   return (
     <ClipItem
       clip={clip}
-      scale={scale}
       trackID={trackID}
       isSelected={isSelected}
       isEditing={isEditing}
-      name={name}
       newName={newName}
       onChange={onChange}
       onEdit={onEdit}

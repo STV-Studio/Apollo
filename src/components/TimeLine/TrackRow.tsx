@@ -7,10 +7,9 @@ import TrackClipItem from "./TrackClipItem";
 
 interface Props {
   track: Track;
-  scale: number;
   gostClip: GostClip[];
 }
-function TrackRow({ track, scale, gostClip }: Props) {
+function TrackRow({ track, gostClip }: Props) {
   const { clips } = useClips();
 
   const { handleClipEdit } = useDataEdit();
@@ -44,8 +43,6 @@ function TrackRow({ track, scale, gostClip }: Props) {
           key={clip.id}
           clip={clip}
           trackID={track.id}
-          scale={scale}
-          name={ASSET.name}
           isEditing={isEditID === clip.id}
           newName={newName}
           onChange={handleChange}
@@ -58,7 +55,6 @@ function TrackRow({ track, scale, gostClip }: Props) {
   }, [
     track.clips,
     clips,
-    scale,
     isEditID,
     newName,
     cancelEdit,
@@ -83,7 +79,6 @@ function TrackRow({ track, scale, gostClip }: Props) {
           <GhostClip
             key={`${ghost.trackId}-${ghost.type}`}
             ghostClip={[ghost]}
-            scale={scale}
           />
         ))}
       </div>

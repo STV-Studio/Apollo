@@ -12,7 +12,7 @@ import { useZoomEffect } from "../../context/ZoomContext/ZoomContext";
 function TimeLine() {
   const { addTrack, tracks, setTracks } = useClips();
   const { handlePlay, handlePause, isPlay } = usePreview();
-  const { scale, STEP, containerRef } = useZoomEffect();
+  const { scale, containerRef } = useZoomEffect();
   const { handleTrackEdit } = useDataEdit();
   const { setSelectedClipId } = useSelected();
   const {
@@ -83,13 +83,9 @@ function TimeLine() {
             className="timeline_inner timeline_scroll_viewport"
           >
             <div className="timeline_content">
-              <TimeRuler
-                containerRef={containerRef}
-                scale={scale}
-                STEP={STEP}
-              />
+              <TimeRuler containerRef={containerRef} />
               <Tracks gostClip={gostClip} scale={scale} />
-              <Playhead scale={scale} />
+              <Playhead />
             </div>
           </div>
         </div>

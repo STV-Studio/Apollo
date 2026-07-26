@@ -1,10 +1,10 @@
 import type { TimelineClip } from "../../utils/types/types";
 import type { GostClip } from "../../utils/hooks/timeline/useTimeLineDrop";
+import { useZoomEffect } from "../../context/ZoomContext/ZoomContext";
 
 interface Props {
   clip?: TimelineClip | GostClip;
   ghostClip?: GostClip[];
-  scale: number;
   start?: number;
   duration?: number;
   offsetY?: number;
@@ -13,12 +13,12 @@ interface Props {
 export default function GhostClip({
   clip,
   ghostClip,
-  scale,
   start,
   duration,
   offsetY = 0,
 }: Props) {
   const targetClip = clip || (ghostClip && ghostClip[0]);
+  const { scale } = useZoomEffect();
 
   if (!targetClip) return null;
 
