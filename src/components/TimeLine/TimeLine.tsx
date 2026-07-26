@@ -12,12 +12,14 @@ import {
   useTimeLineDrop,
   onKey,
 } from "../../utils";
+import { useSelected } from "../../context/SelectionContext";
 
 function TimeLine() {
-  const { addTrack, tracks, setSelectedClipId, setTracks } = useClips();
+  const { addTrack, tracks, setTracks } = useClips();
   const { handlePlay, handlePause, isPlay } = usePreview();
   const { scale, STEP, containerRef } = useZoomEffect();
   const { handleTrackEdit } = useDataEdit();
+  const { setSelectedClipId } = useSelected();
   const {
     isEditID,
     newName,

@@ -1,9 +1,9 @@
 import { memo, useMemo } from "react";
 import { useClipEdit, useDataEdit, type Track } from "../../utils";
 import { useClips } from "../../context";
-import ClipItem from "./ClipItem";
 import type { GostClip } from "../../utils/hooks/timeline/useTimeLineDrop";
 import GhostClip from "./GostClip";
+import TrackClipItem from "./TrackClipItem";
 
 interface Props {
   track: Track;
@@ -11,7 +11,7 @@ interface Props {
   gostClip: GostClip[];
 }
 function TrackRow({ track, scale, gostClip }: Props) {
-  const { clips, selectedClipId } = useClips();
+  const { clips } = useClips();
 
   const { handleClipEdit } = useDataEdit();
   const {
@@ -32,25 +32,21 @@ function TrackRow({ track, scale, gostClip }: Props) {
   //* отображение клипов на треке в зависимости от их позиции и длительности, а также масштаба таймлайна для правильного отображения ширины клипа на таймлайне */
   const TRACKS = useMemo(() => {
     return track.clips.map((clip) => {
-      const ASSETS = clips.find((a) => a.id === clip.assetId);
-      if (!ASSETS) return null;
+      const ASSET = clips.find((a) => a.id === clip.assetId);
+      if (!ASSET) return null;
 
-      const isSelected = selectedClipId === clip.id;
       return (
-        <ClipItem
+        <TrackClipItem
           key={clip.id}
-          clip={{
-            ...clip,
-          }}
-          isSelected={isSelected}
-          name={ASSETS.name}
-          scale={scale}
+          clip={clip}
           trackID={track.id}
+          scale={scale}
+          name={ASSET.name}
           isEditing={isEditID === clip.id}
           newName={newName}
           onChange={handleChange}
           onEdit={startEditing}
-          onSave={() => saveEdit(clip.id)}
+          onSave={saveEdit}
           onCancel={cancelEdit}
         />
       );
@@ -58,7 +54,6 @@ function TrackRow({ track, scale, gostClip }: Props) {
   }, [
     track.clips,
     clips,
-    selectedClipId,
     scale,
     isEditID,
     newName,

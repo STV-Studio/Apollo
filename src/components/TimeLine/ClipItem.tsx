@@ -1,11 +1,11 @@
 import { memo, useMemo } from "react";
 import { useDragClip, useResizeClip } from "../../utils";
-import { useClips } from "../../context";
 import type { TimelineClip } from "../../utils/types/types";
 import Option_ListClip from "./Option_ListClip";
 import FadeClip from "./FadeClip";
 import EditBlock from "./EditBlock";
 import { getClipColor } from "../../utils/helper/helperTypeClip";
+import { useSelected } from "../../context/SelectionContext";
 
 interface Props {
   clip: TimelineClip;
@@ -36,7 +36,7 @@ function ClipItem({
 }: Props) {
   const { start, duration, type, id } = clip;
   const { onMouseDown } = useDragClip({ start, id, trackID });
-  const { setSelectedClipId } = useClips();
+  const { setSelectedClipId } = useSelected();
   const { onResizeStart } = useResizeClip({
     id: clip.id,
     trackID,

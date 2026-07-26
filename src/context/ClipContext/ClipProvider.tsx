@@ -19,9 +19,6 @@ export function ClipProvider({ children }: Props) {
     { id: "6", name: "Track 6", clips: [] },
   ]);
 
-  //! состояние для хранения идентификатора выбранного клипа, которое может быть использовано для управления выделением клипа на таймлайне или треке.
-  const [selectedClipId, setSelectedClipId] = useState<string | null>(null);
-
   // ----
 
   /* 
@@ -169,8 +166,6 @@ export function ClipProvider({ children }: Props) {
       setTracks,
       addToTrack,
       addTrack,
-      selectedClipId,
-      setSelectedClipId,
     }),
     [
       moveClipToTrack,
@@ -185,8 +180,6 @@ export function ClipProvider({ children }: Props) {
       setTracks,
       addToTrack,
       addTrack,
-      selectedClipId,
-      setSelectedClipId,
     ],
   );
 
