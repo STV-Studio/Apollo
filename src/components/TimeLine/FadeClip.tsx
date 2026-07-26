@@ -1,16 +1,18 @@
-import { memo, useMemo, useRef } from "react";
+import { memo, useRef } from "react";
+
+import { useClips } from "../../context";
+import type { TimelineClip } from "../../utils";
+
 import {
   createCustomeVolumePoints,
   getCustomVolumePoints,
   useFadeDrag,
   useScrollParent,
   useTimeFormat,
-  type TimelineClip,
+  useVisibleTimelineItems,
+  getSmoothVolumePath,
+  getAllVolumePoints,
 } from "../../utils";
-
-import { useClips } from "../../context";
-import { getSmoothVolumePath } from "../../utils/helper/getSmoothVolumePath";
-import { getAllVolumePoints } from "../../utils/helper/getAllVolumePoints";
 
 interface Props {
   clip: TimelineClip;
@@ -77,25 +79,13 @@ function FadeClip({ clip, trackID, scale }: Props) {
     });
   };
 
-  const visiblePoints = useMemo(() => {
-    const OVERSCAN_SECONDS = 2;
-
-    const viewStartTime = Math.max(
-      0,
-      viewport.scrollLeft / scale - OVERSCAN_SECONDS,
-    );
-    const viewEndTime =
-      (viewport.scrollLeft + viewport.clientWidth) / scale + OVERSCAN_SECONDS;
-
-    return customVolumePoints.filter(({ x }) => {
-      const pointsLocalTime = x / scale;
-      const pointsGlobalTime = start + pointsLocalTime;
-
-      return (
-        pointsGlobalTime >= viewStartTime && pointsGlobalTime <= viewEndTime
-      );
-    });
-  }, [customVolumePoints, scale, start, viewport]);
+  const visiblePoints = useVisibleTimelineItems({
+    items: customVolumePoints,
+    scale,
+    clipStart: start,
+    viewport,
+    getTimeInSeconds: (point) => point.x / scale,
+  });
 
   const points = visiblePoints.map(({ x, y, id }) => (
     <circle
