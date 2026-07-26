@@ -46,10 +46,46 @@ export function useVideoSync(activeVideo?: TimelineClip) {
     const video = VIDEO_REF.current;
     if (!video) return;
 
-    if (isPlay) {
-      video.play().catch(() => {});
+    if (isPlay && activeVideo) {
+      let isCancelled = false;
+
+      const playVideo = () => {
+        if (isCancelled) return;
+
+        const targetTime = Math.max(
+          0,
+          currentTimeRef.current - activeVideo.start,
+        );
+
+        if (Math.abs(video.currentTime - targetTime) > 0.1) {
+          video.currentTime = targetTime;
+        }
+
+        video.play().catch(() => {});
+      };
+
+      if (video.readyState < 2) {
+        const handleCanPlay = () => {
+          playVideo();
+          video.removeEventListener("canplay", handleCanPlay);
+        };
+
+        video.addEventListener("canplay", handleCanPlay);
+
+        return () => {
+          isCancelled = true;
+          video.removeEventListener("canplay", handleCanPlay);
+        };
+      } else {
+        // Если видео уже готовы проигрывать — запускаем через RAF
+        const frameId = requestAnimationFrame(playVideo);
+        return () => {
+          isCancelled = true;
+          cancelAnimationFrame(frameId);
+        };
+      }
     } else {
       video.pause();
     }
-  }, [isPlay, VIDEO_REF]);
+  }, [isPlay, activeVideo, currentTimeRef, VIDEO_REF]);
 }

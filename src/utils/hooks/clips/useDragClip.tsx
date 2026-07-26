@@ -3,6 +3,7 @@ import { useClips, usePreview } from "../../../context";
 import { insertClip } from "../../const";
 import { useZoomEffect } from "../timeline";
 import { pauseAllMedia } from "../../helper";
+import { useSelected } from "../../../context/SelectionContext";
 
 interface Props {
   id: string;
@@ -12,8 +13,8 @@ interface Props {
 
 //! ХУК ДЛЯ ПЕРЕТАСКИВАНИЯ КЛИПОВ НА ТАЙМЛАЙНЕ, ОБРАБАТЫВАЕТ СМЕЩЕНИЕ ПО X И ПЕРЕКЛЮЧЕНИЕ МЕЖДУ ТРЕКАМИ ПРИ ПЕРЕМЕЩЕНИИ ПО Y
 export function useDragClip({ start, id, trackID }: Props) {
-  const { updateClip, moveClipToTrack, tracks, selectedClipId, setTracks } =
-    useClips();
+  const { updateClip, moveClipToTrack, tracks, setTracks } = useClips();
+  const { selectedClipId } = useSelected();
   const { scale } = useZoomEffect();
   const { setIsPlay, VIDEO_REF } = usePreview();
 

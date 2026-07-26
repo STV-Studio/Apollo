@@ -1,4 +1,5 @@
 import { useClips, usePreview } from "../../../context";
+import { useSelected } from "../../../context/SelectionContext";
 import { pauseAllMedia } from "../../helper";
 
 interface Props {
@@ -18,7 +19,8 @@ export function useResizeClip({
   assetId,
   sourceOffset,
 }: Props) {
-  const { updateClip, selectedClipId, clips } = useClips();
+  const { updateClip, clips } = useClips();
+  const { selectedClipId } = useSelected();
   const { VIDEO_REF, setIsPlay } = usePreview();
 
   const onResizeStart = (e: React.MouseEvent, side: "left" | "right") => {
